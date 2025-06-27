@@ -25,31 +25,25 @@ public class HorizontalLeftEffect : Effect
 
     private IEnumerator CreateWaveColor(Dictionary<Vector2, CellController> cellModels, effectColor color, int rows, int columns, int numberZero, bool shouldDecrease, bool normalColor, float strength)
     {
-        // Duyệt qua từng cột để tạo hiệu ứng sóng từ trái sang phải
         for (int i = 0; i < rows; i++)
         {
             CreateEffect(numberZero, i, cellModels, color, false, false, strength, rows);
             yield return new WaitForSeconds(0.07f);
 
-            // Nếu đã xử lý cột trước đó, áp dụng hiệu ứng 2 (giảm độ đậm) cho nó
             if (i > 0)
             {
                 CreateEffect(numberZero, i - 1,  cellModels, color, true, false, 16f, rows);
             }
             yield return new WaitForSeconds(0.07f);
 
-            // Nếu đã xử lý cột i-2 trước đó, áp dụng hiệu ứng 3 (trở về màu ban đầu) cho nó
             if (i > 1)
             {
                 CreateEffect(numberZero, i - 2, cellModels, color, true, true, 13f, rows);
             }
 
-            // Chờ để tạo hiệu ứng sóng di chuyển
             yield return new WaitForSeconds(0.07f);
         }
 
-        //// Xử lý 2 cột cuối cùng (xử lý hiệu ứng 2 và 3 cho chúng)
-        //// Hiệu ứng 2 cho cột kế cuối
         CreateEffect(numberZero, rows - 2, cellModels, color, true, true, 13f, rows);
         yield return new WaitForSeconds(0.07f);
         CreateEffect(numberZero, rows - 1, cellModels, color, true, false, 16f, rows);

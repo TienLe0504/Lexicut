@@ -85,7 +85,6 @@ public class BoardView : MonoBehaviour
                 if (timer >= 5f)
                 {
                     timer = 0f;
-                    //Effect effect = new HorizontalLeftEffect();
                     effectStrategy.SetEffect(ManagerGame.Instance.effectCell);
                     MonoBehaviour runner = this;
                     effectColor effectColor = ManagerGame.Instance.colorEffectCurrent;

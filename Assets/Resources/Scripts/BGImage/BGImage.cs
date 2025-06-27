@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class BGImage : MonoBehaviour
 {
-    // Start is called before the first frame update
     private Image bgImage;
     public Canvas canvas;
     void Start()

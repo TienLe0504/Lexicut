@@ -30,13 +30,8 @@ public class HomeScreenController : MonoBehaviour
     }
     private void Start()
     {
-        //gold = ManagerGame.Instance.gold;
     }
-    //public void SetupGold()
-    //{
-    //    gold = ManagerGame.Instance.gold;
 
-    //}
     public void SaveGold(int value)
     {
         //gold+= value;

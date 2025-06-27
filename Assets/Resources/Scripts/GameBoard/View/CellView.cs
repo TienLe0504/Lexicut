@@ -25,7 +25,6 @@ public class CellView : MonoBehaviour, IPointerEnterHandler
     public int i;
     public int j;
     public float ligthFator = 0.25f;
-    //public bool isFalseDot = false;
 
     private void Start()
     {
@@ -55,7 +54,6 @@ public class CellView : MonoBehaviour, IPointerEnterHandler
     public void FalseDot()
     {
 
-        //isFalseDot = true;
         cell.color = Color.red;
 
         Vector3 originalPos = transform.localPosition; 
@@ -65,13 +63,12 @@ public class CellView : MonoBehaviour, IPointerEnterHandler
             transform.localPosition = originalPos;  
             cell.color = cellcontroller.cellmodel.color;
             cellcontroller.ResetIsUsed();
-            //isFalseDot = false;
         });
     }
     public void EffectColor(ref Color color, ref float strength, ref bool shouldDecrease, ref bool normalColor)
     {
         bg.gameObject.SetActive(true);
-        textmesh.raycastTarget = false; // Ngăn pointer trigger
+        textmesh.raycastTarget = false; 
         cell.raycastTarget = false;
 
         Color colorText = Color.white;
@@ -93,7 +90,6 @@ public class CellView : MonoBehaviour, IPointerEnterHandler
 
         Vector3 originalScale = transform.localScale;
 
-        // Phóng to lên 1.05, sau đó thu nhỏ về 1
         transform.DOScale(1.05f, 0.1f).OnComplete(() =>
         {
             transform.DOScale(originalScale, 0.1f).OnComplete(() =>
@@ -104,7 +100,6 @@ public class CellView : MonoBehaviour, IPointerEnterHandler
                     bg.gameObject.SetActive(false);
                 }
 
-                // Bật lại raycast
                 textmesh.raycastTarget = true;
                 cell.raycastTarget = true;
             });
@@ -112,55 +107,7 @@ public class CellView : MonoBehaviour, IPointerEnterHandler
     }
 
 
-    //public void EffectColor(ref Color color,ref float strength, ref bool shouldDecrease , ref bool normalColor)
-    //{
-
-    //    bg.gameObject.SetActive(true);
-    //    Color colorText = Color.white;
-
-    //    if (!shouldDecrease)
-    //    {
-    //        bg.color = color;
-    //        colorText = color;
-
-
-    //    }
-    //    else
-    //    {
-    //        Color colorCurrent = bg.color;
-    //        bg.color = cellcontroller.DecreaseColor(colorCurrent);
-    //        colorText = cellcontroller.DecreaseColor(colorCurrent);
-    //    }
-    //    //if (!isFalseDot)
-    //    //{
-    //    //    cell.color = cellcontroller.cellmodel.color;
-
-    //    //}
-    //    Vector3 originalPos = transform.localPosition;
-    //    textmesh.color = colorText; 
-    //    bool isNormal = normalColor;
-
-    //    transform.DOShakePosition(0.06f, strength: strength, vibrato: 15, randomness: 90, fadeOut: true).OnComplete(() =>
-    //    {
-    //        transform.localPosition = originalPos;
-    //        if (isNormal)
-    //        {
-    //            //bg.color = Color.white;
-    //            textmesh.color = Color.black;
-    //            //Image img = GetComponentInChildren<Image>();
-    //            //img.color = cellcontroller.cellmodel.color;
-    //            //if (!isFalseDot)
-    //            //{
-    //            //    cell.color = cellcontroller.cellmodel.color;
-
-    //            //}
-
-    //            bg.gameObject.SetActive(false);
-
-    //        }
-    //    });
-
-    //}
+    
     public void TrueDot(Color color)
     {
 

@@ -4,12 +4,9 @@ using UnityEngine;
 
 public class CONST
 {
-    // Bỏ "Assets/Resources/" ở đầu các đường dẫn
     public const string PATH_DATA = "Data/";
-
     public const string PATH_IMG = "Image/";
     public const string PATH_IMG_CUT_FRUITS = "Image/CUTFRUIT/";
-
     public const string PATH_CUT_FRUITS = "Data/CUTFRUIT";
     public const string PATH_STORE = "Data/STORE";
     public const string PATH_STORE_ABSOLUTE= "Assets/Resources/Data/STORE.json";

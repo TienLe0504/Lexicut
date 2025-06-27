@@ -76,7 +76,7 @@ IEnumerator GameLoop()
 
         if (spawnCoroutine != null)
             StopCoroutine(spawnCoroutine);
-        spawnCoroutine = StartCoroutine(SpawnItemsLoop(12f)); // chỉ tạo trong 12 giây
+        spawnCoroutine = StartCoroutine(SpawnItemsLoop(12f)); 
 
         while (roundTime > 0)
         {
@@ -98,7 +98,6 @@ IEnumerator GameLoop()
             }
         }
 
-        // Dừng tạo trái cây khi hết vòng
         if (spawnCoroutine != null)
         {
             StopCoroutine(spawnCoroutine);
@@ -106,7 +105,6 @@ IEnumerator GameLoop()
         }
     }
 
-    // TODO: Hiển thị kết thúc game
     yield return new WaitForSeconds(1f);
         ShowPopupScore();
 
@@ -125,7 +123,7 @@ IEnumerator GameLoop()
         float timer = 0f;
         while (timer < duration)
         {
-            ShowItemCut(); // Gọi hàm tạo trái cây
+            ShowItemCut(); 
             yield return new WaitForSeconds(3.5f);
             timer += 3.5f;
         }
@@ -149,7 +147,6 @@ IEnumerator GameLoop()
     public void SelectedWord()
     {
         string path = CONST.PATH_CUT_FRUITS;
-        //List<string> listword = ResourceManager.Instance.GetList(path);
         List<string> listword = ResourceManager.Instance.LoadJson<List<string>>(path);
 
         int randomIndex = 0;
@@ -189,7 +186,6 @@ IEnumerator GameLoop()
 
     public void ShowItemCut()
     {
-        //StartCoroutine(ShowAllItem(model.wordCurrent));
         ShowAllItem(model.wordCurrent);
 
     }
@@ -225,7 +221,6 @@ IEnumerator GameLoop()
         int index = Random.Range(0, listPosX.Count);
         float posXStart = listPosX[index];
         listPosX.RemoveAt(index);
-        //ItemCutModel item = Instantiate(uiView.prefabItemcut, uiView.tranformItemCut.transform);
         ItemCutView itemCutView = Instantiate(uiView.prefabItemcut, uiView.tranformItemCut.transform);
         ItemCutModel item = new ItemCutModel();
         itemCutView.GetComponent<RectTransform>().localPosition = new Vector3(posXStart, posYStartAndFall, 0f);
@@ -271,7 +266,6 @@ IEnumerator GameLoop()
     public Sprite GetImage(string word)
     {
         string path = CONST.PATH_IMG_CUT_FRUITS + word;
-        //return ResourceManager.Instance.GetImage(path);
         return ResourceManager.Instance.GetResource<Sprite>(path);
     }
 

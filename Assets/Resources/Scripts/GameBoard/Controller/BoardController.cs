@@ -185,7 +185,6 @@ public class BoardController : MonoBehaviour
     public  List<string> SelectedWord(string category)
     {
         string path = CONST.PATH_DATA + category;
-        //List<string> listword = ResourceManager.Instance.GetList(path);
         List<string> listword = ResourceManager.Instance.LoadJson<List<string>>(path);
 
         List<string> shuffledWords = new List<string>(listword);
@@ -203,9 +202,7 @@ public class BoardController : MonoBehaviour
 
     public void ShowPopupEndGame(object data=null)
     {
-        //this.Broadcast(EventID.recieveCategory, category);
-        //this.Broadcast(EventID.recieveWord, boardModel.wordList);
-        //this.Broadcast(EventID.recieveAnswer, boardModel.answer);
+
         StartCoroutine(WaitToShowPoupGame());
     }
     IEnumerator WaitToShowPoupGame()
@@ -287,8 +284,7 @@ public class BoardController : MonoBehaviour
                     dotColor = HelperColor.Instance.RandomColor(true);
                     random = true;
                 }
-                //cell.cellmodel.color = cell.GetTrueColor(dotColor);
-                //cell.cellmodel.color = ManagerColor.Instance.GetColor(dotColor);
+
                 cell.cellmodel.SaveColor(HelperColor.Instance.GetColor(dotColor));
                 cell.TrueDot(HelperColor.Instance.GetColor(dotColor));
             }
@@ -297,7 +293,6 @@ public class BoardController : MonoBehaviour
         boardModel.currentChain.Clear();
         if (boardModel.answer.Count == 0)
         {
-            //this.Broadcast(EventID.ShowBG);
             ShowPopupEndGame();
         }
     }

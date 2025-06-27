@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Generic base class for all UI subsystems
 public abstract class BaseUISubsystem<T> where T : BaseUIElement
 {
     protected Dictionary<string, T> elements = new Dictionary<string, T>();
@@ -40,7 +39,6 @@ public abstract class BaseUISubsystem<T> where T : BaseUIElement
 
     public virtual void Show<TElement>(object data = null, bool forceShowData = true) where TElement : T
     {
-        // Use the UIManager's ShowUIElementLogic to handle the showing process
         currentElement = manager.ShowUIElementLogic<TElement, T>(
             data,
             forceShowData,

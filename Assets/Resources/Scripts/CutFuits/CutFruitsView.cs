@@ -32,8 +32,7 @@ public class CutFruitsView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     private Tween tweenScore;
     private Tween tweenWord;
     public GameObject effectParrent;
-    //public GameObject prefabExplodeFruit;
-    //public GameObject prefabExplodeBomb;
+
 
     private void Awake()
     {

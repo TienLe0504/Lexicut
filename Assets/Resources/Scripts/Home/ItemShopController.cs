@@ -20,13 +20,6 @@ public class ItemShopController : MonoBehaviour
         return ResourceManager.Instance.GetResource<Sprite>(path);
     }
     public virtual void PressButton(){}
-    //public void PressButton()
-    //{
-    //    if (inventory.isUsed) return;
-    //    this.Broadcast(EventID.ActiveBGShop);
-    //    UIManager.Instance.ShowOverlap<OverlapBuyItem>(this,true);
-
-    //}
 
     public void BuyItemSuccess(object data = null)
     {
