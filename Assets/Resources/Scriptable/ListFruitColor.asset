@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85fcef44163c84f42962d25980f2f2b2, type: 3}
+  m_Name: ListFruitColor
+  m_EditorClassIdentifier: 
+  fruitColors:
+  - fruit: apple
+    color: 4
+  - fruit: banana
+    color: 1
+  - fruit: bike
+    color: 6
+  - fruit: boat
+    color: 7
+  - fruit: buffalo
+    color: 8
+  - fruit: car
+    color: 4
+  - fruit: coconut
+    color: 8
+  - fruit: dragon
+    color: 4
+  - fruit: grape
+    color: 2
+  - fruit: plane
+    color: 7
+  - fruit: potato
+    color: 14
+  - fruit: shark
+    color: 0
+  - fruit: tomato
+    color: 4
+  - fruit: train
+    color: 8
+  - fruit: watermelon
+    color: 3

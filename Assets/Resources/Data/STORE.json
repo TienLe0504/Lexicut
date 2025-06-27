@@ -1,0 +1,16 @@
+{
+  "gold": 317,
+  "inventory": [
+    "DiagonalEffect",
+    "YellowTrail",
+    "GreenColor",
+    "YellowColor",
+    "BlueGreenTrail",
+    "VerticalEffect",
+    "BlueTrail",
+    "OrangeColor"
+  ],
+  "color": "YellowColor",
+  "effect": "DiagonalEffect",
+  "trail": "YellowTrail"
+}

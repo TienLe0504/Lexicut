@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01d9f2b4f6b73744fb8a39250ea7214b, type: 3}
+  m_Name: ShopColor
+  m_EditorClassIdentifier: 
+  inventoryList:
+  - name: Green Color
+    image: {fileID: 21300000, guid: 3257cb1d8655b4440854157ee51c812b, type: 3}
+    gold: 1500
+    typeInventory: 8
+    isUsed: 0
+    typeChoice: 2
+  - name: Yellow Color
+    image: {fileID: 21300000, guid: 051e653c5acc7cc40b4ad8388e5b7ecf, type: 3}
+    gold: 1200
+    typeInventory: 9
+    isUsed: 0
+    typeChoice: 2
+  - name: Orange Color
+    image: {fileID: 21300000, guid: 0f8a1cf296cc37d4d81da59204946b33, type: 3}
+    gold: 1100
+    typeInventory: 10
+    isUsed: 0
+    typeChoice: 2
