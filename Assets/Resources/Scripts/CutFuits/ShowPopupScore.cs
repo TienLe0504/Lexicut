@@ -36,6 +36,8 @@ public class ShowPopupScore : BasePopup
         User currentUser = listUser.Find(u => u.id == CONST.KEY_ID);
         currentUser.score += score;
         ResourceManager.Instance.SaveToFile<List<User>>(CONST.PATH_RANK, CONST.KEY_RANK, listUser);
+        ManagerGame.Instance.users = listUser;
+        ManagerGame.Instance.SortListUser();
     }    
     public void PressBtnContinue()
     {

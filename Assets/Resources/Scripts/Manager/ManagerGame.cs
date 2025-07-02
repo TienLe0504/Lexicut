@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
 
 public class ManagerGame : BaseManager<ManagerGame>
@@ -32,6 +33,9 @@ public class ManagerGame : BaseManager<ManagerGame>
     public string effectCellName;
     public string trailName;
     public TrailRenderer trailCurrent;
+    // === User Data ===
+    public List<User> users = new List<User>();
+    public User currentUser;
     private void Awake()
     {
         GetSizeScreen();
@@ -42,6 +46,8 @@ public class ManagerGame : BaseManager<ManagerGame>
         ResourceManager.Instance.EnsureRankFileExists();
         
         AddScoreForUsers();
+        SortListUser();
+        GetCurrentUser();
         LoadColorEffect();
         LoadEffectCell();
         LoadTrail();
@@ -90,6 +96,7 @@ public class ManagerGame : BaseManager<ManagerGame>
                 }
             }
             ResourceManager.Instance.SaveToFile<List<User>>(CONST.PATH_RANK, CONST.KEY_RANK, users);
+            this.users = users;
         }
     }
 
@@ -247,6 +254,13 @@ public class ManagerGame : BaseManager<ManagerGame>
             }
         }
     }
-
+    public void SortListUser()
+    {
+        users.Sort((a, b) => b.score.CompareTo(a.score));
+    }
+    public void GetCurrentUser()
+    {
+        User currentUser = users.Find(u => u.id == CONST.KEY_ID);
+    }
 }
 
