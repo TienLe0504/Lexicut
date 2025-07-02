@@ -24,7 +24,12 @@ public class CellController : MonoBehaviour
             return;
         }
         cellmodel.isUsed = true;
-        this.Broadcast(EventID.HanldeCell, this);
+        PlaySoundWord();
+        this.Broadcast(EventID.HandleCell, this);
+    }
+    public void PlaySoundWord()
+    {
+        SoundManager.Instance.PlayOneShotSound(SoundManager.Instance.chooseWord);
     }
     public void ResetIsUsed()
     {

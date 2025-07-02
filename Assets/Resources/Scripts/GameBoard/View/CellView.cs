@@ -25,6 +25,7 @@ public class CellView : MonoBehaviour, IPointerEnterHandler
     public int i;
     public int j;
     public float ligthFator = 0.25f;
+    private Tween falseDotTween;
 
     private void Start()
     {
@@ -46,7 +47,6 @@ public class CellView : MonoBehaviour, IPointerEnterHandler
     }
 
 
-    private Tween falseDotTween;
     public void OnPointerEnter(PointerEventData eventData)
     {
         cellcontroller.OnSelectLetter();

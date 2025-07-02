@@ -9,8 +9,7 @@ public class ItemShopChildController : ItemShopController
     {
         base.PressButton();
         if (inventory.isUsed) return;
-        this.Broadcast(EventID.ActiveBGShop);
-        Debug.Log("Press child btn");
+        this.Broadcast(EventID.ActivateBackgroundShop);
         UIManager.Instance.ShowOverlap<OverlapBuyItem>(this, true);
     }
 }

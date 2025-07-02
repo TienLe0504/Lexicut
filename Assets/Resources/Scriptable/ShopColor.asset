@@ -23,7 +23,7 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 051e653c5acc7cc40b4ad8388e5b7ecf, type: 3}
     gold: 1200
     typeInventory: 9
-    isUsed: 0
+    isUsed: 1
     typeChoice: 2
   - name: Orange Color
     image: {fileID: 21300000, guid: 0f8a1cf296cc37d4d81da59204946b33, type: 3}

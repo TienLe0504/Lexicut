@@ -30,15 +30,15 @@ public class BoardController : MonoBehaviour
 
     private void OnDisable()
     {
-        this.Unregister(EventID.HanldeCell, RecieveCell);
-        this.Unregister(EventID.playGameAgain, PlayGameAgagin);
-        this.Unregister(EventID.showPopupEndGame, ShowPopupEndGame);
+        this.Unregister(EventID.HandleCell, RecieveCell);
+        this.Unregister(EventID.PlayGameAgain, PlayGameAgagin);
+        this.Unregister(EventID.ShowEndGamePopup, ShowPopupEndGame);
     }
     private void OnEnable()
     {
-        this.Register(EventID.HanldeCell, RecieveCell);
-        this.Register(EventID.playGameAgain, PlayGameAgagin);
-        this.Register(EventID.showPopupEndGame, ShowPopupEndGame);
+        this.Register(EventID.HandleCell, RecieveCell);
+        this.Register(EventID.PlayGameAgain, PlayGameAgagin);
+        this.Register(EventID.ShowEndGamePopup, ShowPopupEndGame);
     }
     public void StartGame(string category)
     {
@@ -47,6 +47,11 @@ public class BoardController : MonoBehaviour
         RepairData(category);
         CreateBoard();
         CreateBoardAgain();
+        PlayMusic();
+    }
+    public void PlayMusic()
+    {
+        SoundManager.Instance.PlayLoopingMusic(SoundManager.Instance.wordchainGame,CONST.KEYMUSIC,false,0.7f);
     }
     public void PlayGameAgagin(object data)
     {
@@ -185,7 +190,7 @@ public class BoardController : MonoBehaviour
     public  List<string> SelectedWord(string category)
     {
         string path = CONST.PATH_DATA + category;
-        List<string> listword = ResourceManager.Instance.LoadJson<List<string>>(path);
+        List<string> listword = ResourceManager.Instance.LoadFromResources<List<string>>(path);
 
         List<string> shuffledWords = new List<string>(listword);
         int randomIndex = 0;
@@ -239,7 +244,7 @@ public class BoardController : MonoBehaviour
     }
     public void FalseSelect()
     {
-        this.Broadcast(EventID.moves);
+        this.Broadcast(EventID.Moves);
     }
     private void AnswerDot()
     {
@@ -272,11 +277,12 @@ public class BoardController : MonoBehaviour
                 cell.FalseDot();
             }
             FalseSelect();
+            InCorrectWord();
         }
         if (found)
         {
             boardModel.RemoveWordAnswer(wordToRemove);
-            effectColor dotColor = effectColor.Blue;
+            EffectColor dotColor = EffectColor.Blue;
             bool random = false;
             foreach (CellController cell in boardModel.currentChain)
             {
@@ -288,6 +294,7 @@ public class BoardController : MonoBehaviour
                 cell.cellmodel.SaveColor(HelperColor.Instance.GetColor(dotColor));
                 cell.TrueDot(HelperColor.Instance.GetColor(dotColor));
             }
+            CorrectWord();
         }
 
         boardModel.currentChain.Clear();
@@ -297,6 +304,16 @@ public class BoardController : MonoBehaviour
         }
     }
 
+    public void CorrectWord()
+    {
+        SoundManager.Instance.PlayOneShotSound(SoundManager.Instance.correctWord);
+
+    }
+    public void InCorrectWord()
+    {
+        SoundManager.Instance.PlayOneShotSound(SoundManager.Instance.inCorrectWord);
+
+    }
     private string ReverseString(string input)
     {
         char[] array = input.ToCharArray();

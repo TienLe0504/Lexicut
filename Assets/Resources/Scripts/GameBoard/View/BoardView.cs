@@ -87,7 +87,7 @@ public class BoardView : MonoBehaviour
                     timer = 0f;
                     effectStrategy.SetEffect(ManagerGame.Instance.effectCell);
                     MonoBehaviour runner = this;
-                    effectColor effectColor = ManagerGame.Instance.colorEffectCurrent;
+                    EffectColor effectColor = ManagerGame.Instance.colorEffectCurrent;
                     effectStrategy.SetParameters(ref runner,ref cellModels,ref rows,ref columns,ref effectColor);
                     effectStrategy.PerformEffect();
                 }

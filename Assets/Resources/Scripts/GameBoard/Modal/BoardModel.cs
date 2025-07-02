@@ -8,9 +8,9 @@ public class BoardModel
     public List<string> wordList = new List<string>();
     public List<Vector2> usedPoint;
     public Dictionary<Vector2, HashSet<string>> usedPositions = new Dictionary<Vector2, HashSet<string>>();
-    public bool[,] testPosition;
-    public HashSet<Vector2> usedPositionVector = new HashSet<Vector2>();
     public Dictionary<string, List<Vector2>> keyValuePairs = new Dictionary<string, List<Vector2>>();
+    public HashSet<Vector2> usedPositionVector = new HashSet<Vector2>();
+    public bool[,] testPosition;
     public List<string> answer = new List<string>();
     public List<CellController> currentChain = new List<CellController>();
 

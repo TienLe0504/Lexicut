@@ -24,8 +24,8 @@ public class WordChainGame : BaseScreen
         base.Show(data);
         if (data is string categoryName)
         {
-            this.Broadcast(EventID.sendWordUI, uiview);
-            this.Broadcast(EventID.sendWordController, controller);
+            this.Broadcast(EventID.SendWordToUI, uiview);
+            this.Broadcast(EventID.SendWordToController, controller);
             boardController.StartGame(categoryName);
         }
 

@@ -6,22 +6,14 @@ using UnityEngine.UI;
 
 public class PopupInventory : BasePopup
 {
+    public PopupInventoryController controller;
     public Button btnClose;
     public GameObject tranformContent;
     public GameObject inventoryPrefab;
     public ScrollRect scrollRect;
     public Tween openTween;
     public Tween closeTween;
-    public PopupInventoryController controller;
-    //private void Awake()
-    //{
-    //    controller = GetComponent<PopupInventoryController>();
-    //    if (controller == null)
-    //    {
-    //        controller = gameObject.AddComponent<PopupInventoryController>();
-    //    }
-    //    controller.popupInventory = this;
-    //}
+
     public override void Hide()
     {
         base.Hide();
@@ -37,7 +29,8 @@ public class PopupInventory : BasePopup
     {
         base.Show(data);
         this.Broadcast(EventID.Back);
-        this.Broadcast(EventID.SetActiveStore);
+        this.Broadcast(EventID.SetStoreActive);
+        this.Broadcast(EventID.ShowRankButton);
         ShowInventory(ManagerGame.Instance.InventoryData, tranformContent);
         StartCoroutine(ResetScrollPosition());
         OpenShopTranform();
@@ -115,6 +108,7 @@ public class PopupInventory : BasePopup
 
     public void CloseShopTranform()
     {
+        controller.PressButton();
         RectTransform rectTransform = this.GetComponent<RectTransform>();
         if (openTween != null && openTween.IsActive()) openTween.Kill();
         if (closeTween != null && closeTween.IsActive()) closeTween.Kill();
@@ -122,8 +116,8 @@ public class PopupInventory : BasePopup
         rectTransform.localScale = Vector3.one;
         closeTween = rectTransform.DOScale(0f, 0.3f).SetEase(Ease.InBack).OnComplete(() =>
         {
-            this.Broadcast(EventID.ShowBtnInventory);
-            this.Broadcast(EventID.InActiveOverlapUseItem);
+            this.Broadcast(EventID.ShowInventoryButton);
+            this.Broadcast(EventID.DeactivateOverlappingItem, false);
             Hide();
         });
     }

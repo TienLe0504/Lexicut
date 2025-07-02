@@ -5,49 +5,66 @@ using UnityEngine;
 
 public class CutFruitController : MonoBehaviour
 {
-    public CutFruits cutFruits;
-    public CutFruitsView uiView;
-    public List<ItemCutView> listCutFruitsController = new List<ItemCutView>();
-    public CutFruitsModal model = new CutFruitsModal();
-    public List<int> numberWord = new List<int>() { 1, 2, 4, 5};
+    // === References ===
+    public CutFruits cutFruitManager;
+    public CutFruitsView cutFruitUI;
+    public CutFruitsModal cutFruitModel = new CutFruitsModal();
+    public List<ItemCutView> activeItemView = new List<ItemCutView>();
+
+    // === Game Configurations ===
+    public List<int> wordCountsPerRound = new List<int>() { 1, 2, 4, 5 };
+    public float roundDuration = 15f;
+    public float totalGameTime = 75f;
+
+    // === Screen & Layout Settings ===
+    public float screenWidth;
+    public float startYPosition;
+    public float itemHeight = 150f;
+    public float itemScale = 0.13f;
+    public float itemSpacingX;
+
+    // === Randomization & Effects ===
+    public float randomYMin;
+    public float randomYMax;
+    public float horizontalRandomFactor = 0.06f;
+    public float lightenFactor = 0.5f;
+
+    // === Game State ===
+    private Coroutine spawnItemCoroutine;
+    private string bombKeyword = "Bomb";
+    public bool inputPressed = false;
+
+    // === Temporary or Debug ===
     public float temp = 0f;
-    public float timeEachGround = 15f;
-    public float timeToPlay = 75f;
-    public float Width;
-    public float YStart;
-    public float heightItem = 150f;
-    public float posRandomYFrom;
-    public float posRandomYTo;
-    public float size = 0.13f;
-    public float rateRandomWidth = 0.06f;
-    public float ligthFactor = 0.5f;
-    public float sizeBlockWidthX;
-    private Coroutine spawnCoroutine;
-    private string nameBomb = "Bomb";
-    public bool isPressed = false;
+
     private void Awake()
     {
-        YStart = - ManagerGame.Instance.HeightScreen/2 - heightItem;
-        Width = ManagerGame.Instance.WidthScreen;
-        sizeBlockWidthX = size* ManagerGame.Instance.WidthScreen;
-        posRandomYFrom = 0.3f* ManagerGame.Instance.HeightScreen / 2;
-        posRandomYTo = 0.6f* ManagerGame.Instance.HeightScreen / 2;
+        startYPosition = - ManagerGame.Instance.HeightScreen/2 - itemHeight;
+        screenWidth = ManagerGame.Instance.WidthScreen;
+        itemSpacingX  = itemScale * ManagerGame.Instance.WidthScreen;
+        randomYMin = 0.3f* ManagerGame.Instance.HeightScreen / 2;
+        randomYMax = 0.6f* ManagerGame.Instance.HeightScreen / 2;
     }
 
 
 
-    public void StartGame()
+    public void InitializeGame()
     {
-        model.SetDefaul();
-        SelectedWord();
-        uiView.ShowWord(model.wordChoosen);
+        cutFruitModel.SetDefaul();
+        ShuffleAndSelectWords();
+        PlayGameMusic();
+        cutFruitUI.ShowWord(cutFruitModel.wordChoosen);
 
     }
-    public void PlayGame()
+    public void StartGameplay()
     {
-        StartCoroutine(CountTimeToPlay());
+        StartCoroutine(StartCountdownToStart());
     }
-    IEnumerator CountTimeToPlay()
+    public void PlayGameMusic()
+    {
+        SoundManager.Instance.PlayLoopingMusic(SoundManager.Instance.cutFruitsGame,CONST.KEYMUSIC,false,1f);
+    }
+    IEnumerator StartCountdownToStart()
     {
         float time = 3f;
         while (time > 0) { 
@@ -58,25 +75,25 @@ public class CutFruitController : MonoBehaviour
             yield return new WaitForSeconds(1f);
             time -= 1f;
         }
-        CreateNumber();
-        StartCoroutine(GameLoop());
+        GenerateWordCountPerRound();
+        StartCoroutine(RunGameLoop());
 
     }
 
-IEnumerator GameLoop()
+IEnumerator RunGameLoop()
 {
-    float totalGameTime = timeToPlay;
+    float totalGameTime = this.totalGameTime;
 
     while (totalGameTime > 0)
     {
-        CoreGame();
-        CreateWord(model.wordCurrent);
+        SetupRoundWords();
+        GenerateWordSet(cutFruitModel.wordCurrent);
 
-        float roundTime = timeEachGround;
+        float roundTime = roundDuration;
 
-        if (spawnCoroutine != null)
-            StopCoroutine(spawnCoroutine);
-        spawnCoroutine = StartCoroutine(SpawnItemsLoop(12f)); 
+        if (spawnItemCoroutine != null)
+            StopCoroutine(spawnItemCoroutine);
+        spawnItemCoroutine = StartCoroutine(SpawnItemsLoop(12f)); 
 
         while (roundTime > 0)
         {
@@ -93,26 +110,25 @@ IEnumerator GameLoop()
 
             if (totalGameTime <= 0)
             {
-                StopCoroutine(spawnCoroutine);
+                StopCoroutine(spawnItemCoroutine);
                 break;
             }
         }
 
-        if (spawnCoroutine != null)
+        if (spawnItemCoroutine != null)
         {
-            StopCoroutine(spawnCoroutine);
-            spawnCoroutine = null;
+            StopCoroutine(spawnItemCoroutine);
+            spawnItemCoroutine = null;
         }
     }
 
     yield return new WaitForSeconds(1f);
-        ShowPopupScore();
+        DisplayFinalScorePopup();
 
     }
-    public void ShowPopupScore()
+    public void DisplayFinalScorePopup()
     {
-        Debug.Log("Tổng số điểm: " + uiView.textScore.text);
-        cutFruits.ChangeSceence();
+        cutFruitManager.ChangeSceence();
     }
 
 
@@ -123,31 +139,31 @@ IEnumerator GameLoop()
         float timer = 0f;
         while (timer < duration)
         {
-            ShowItemCut(); 
+            DisplayCuttableItems(); 
             yield return new WaitForSeconds(3.5f);
             timer += 3.5f;
         }
     }
 
-    public void CreateNumber()
+    public void GenerateWordCountPerRound()
     {
-        numberWord = new List<int>() { 1, 2, 4, 5 };
+        wordCountsPerRound = new List<int>() { 1, 2, 4, 5 };
         int randomIndex = Random.Range(0, 100);
         if (randomIndex > 50)
         {
-            numberWord.Add(4);
+            wordCountsPerRound.Add(4);
         }
         else
         {
-            numberWord.Add(3);
+            wordCountsPerRound.Add(3);
         }
     }
     
 
-    public void SelectedWord()
+    public void ShuffleAndSelectWords()
     {
         string path = CONST.PATH_CUT_FRUITS;
-        List<string> listword = ResourceManager.Instance.LoadJson<List<string>>(path);
+        List<string> listword = ResourceManager.Instance.LoadFromResources<List<string>>(path);
 
         int randomIndex = 0;
         for (int i = 0; i < listword.Count; i++)
@@ -155,20 +171,20 @@ IEnumerator GameLoop()
             randomIndex = Random.Range(i, listword.Count);
             (listword[i], listword[randomIndex]) = (listword[randomIndex], listword[i]);
         }
-        model.wordDiff = listword.GetRange(5, 10);
-        model.wordChoosen = listword.GetRange(0, 5);
+        cutFruitModel.wordDiff = listword.GetRange(5, 10);
+        cutFruitModel.wordChoosen = listword.GetRange(0, 5);
     }
 
-    public void CoreGame()
+    public void SetupRoundWords()
     {
-        if (numberWord.Count > 0)
+        if (wordCountsPerRound.Count > 0)
         {
-            int randomIndex = Random.Range(0, numberWord.Count);
-            int number = numberWord[randomIndex];
-            numberWord.Remove(number);
+            int randomIndex = Random.Range(0, wordCountsPerRound.Count);
+            int number = wordCountsPerRound[randomIndex];
+            wordCountsPerRound.Remove(number);
             List<string> randomWord = new List<string>();
-            model.wordCurrent = new List<string>();
-            foreach(string w in model.wordChoosen)
+            cutFruitModel.wordCurrent = new List<string>();
+            foreach(string w in cutFruitModel.wordChoosen)
             {
                 randomWord.Add(w);
             }
@@ -176,76 +192,80 @@ IEnumerator GameLoop()
             {
                 int index = Random.Range(0, randomWord.Count);
                 string word = randomWord[index];
-                model.wordCurrent.Add(word);
+                cutFruitModel.wordCurrent.Add(word);
                 randomWord.Remove(word);
                 number--;
-            } 
-            uiView.ShowContent(model.wordCurrent);
+            }
+            PlayCorrectWordSound();
+            cutFruitUI.ShowContent(cutFruitModel.wordCurrent);
         }
     }
-
-    public void ShowItemCut()
+    public void PlayCorrectWordSound()
     {
-        ShowAllItem(model.wordCurrent);
+        SoundManager.Instance.PlayOneShotSound(SoundManager.Instance.correctWord);
+    }
+
+    public void DisplayCuttableItems()
+    {
+        SpawnAllItems(cutFruitModel.wordCurrent);
 
     }
-    void  ShowAllItem(List<string> wordlist)
+    void  SpawnAllItems(List<string> wordlist)
     {
         List<float> listPosX = new List<float>();
-        listPosX = CreatePosXList();
+        listPosX = GenerateSpawnXPositions();
         int numberSubstract = 5 - wordlist.Count;
         if (numberSubstract > 0)
         {
-            List<string> wordDiff = ShuffleWord(model.wordDiff, numberSubstract);
+            List<string> wordDiff = ShuffleAndPickWords(cutFruitModel.wordDiff, numberSubstract);
             foreach (string word in wordDiff)
             {
-                CreateItemCut(listPosX, word);
+                SpawnItemCutView(listPosX, word);
             }
         }
         foreach (string word in wordlist)
         {
-            CreateItemCut(listPosX, word);
+            SpawnItemCutView(listPosX, word);
         }
         int randomBomb = Random.Range(1, 10);
         if (randomBomb > 6)
         {
-            CreateItemCut(listPosX, nameBomb);
+            SpawnItemCutView(listPosX, bombKeyword  );
         }
-        //yield return new WaitForSeconds(2.5f);
     }
 
-    private void CreateItemCut(List<float> listPosX, string word)
+    private void SpawnItemCutView(List<float> listPosX, string word)
     {
         ItemType itemType = ItemType.item;
-        float posYStartAndFall = YStart;
+        float posYStartAndFall = startYPosition;
         int index = Random.Range(0, listPosX.Count);
         float posXStart = listPosX[index];
         listPosX.RemoveAt(index);
-        ItemCutView itemCutView = Instantiate(uiView.prefabItemcut, uiView.tranformItemCut.transform);
+        ItemCutView itemCutView = Instantiate(cutFruitUI.prefabItemcut, cutFruitUI.tranformItemCut.transform);
         ItemCutModel item = new ItemCutModel();
         itemCutView.GetComponent<RectTransform>().localPosition = new Vector3(posXStart, posYStartAndFall, 0f);
-        float posYTo = Random.Range(posRandomYFrom, posRandomYTo); // y den
-        float posXTo = posXStart + Random.Range(-Width * rateRandomWidth, Width * rateRandomWidth); // x den
+        float posYTo = Random.Range(randomYMin, randomYMax);
+        float posXTo = posXStart + Random.Range(-screenWidth * horizontalRandomFactor, screenWidth * horizontalRandomFactor); 
         float posXFall = 0;
         if (posXTo <= 0)
         {
-            posXFall = posXTo + Random.Range(-Width * rateRandomWidth, 0);
+            posXFall = posXTo + Random.Range(-screenWidth * horizontalRandomFactor, 0);
         }
         if (posXTo > 0)
         {
-            posXFall = posXTo + Random.Range(0, Width * rateRandomWidth);
+            posXFall = posXTo + Random.Range(0, screenWidth * horizontalRandomFactor);
         }
-        if(word == nameBomb)
+        if(word == bombKeyword  )
         {
             itemType = ItemType.bomb;
         }
         item.SetUp(itemType, word, posXTo, posYTo, posXFall, posYStartAndFall);
-        itemCutView.Setup(GetImage(word), item, this);
+        itemCutView.Setup(LoadItemSprite(word), item, this);
         AddToModel(item, itemCutView);
-        uiView.ItemMove(item, itemCutView);
+        cutFruitUI.ItemMove(item, itemCutView);
     }
 
-    public List<float> CreatePosXList()
+    public List<float> GenerateSpawnXPositions()
     {
         List<float> listPosX = new List<float>();
         listPosX.Add(0f);
@@ -253,23 +273,23 @@ IEnumerator GameLoop()
         int j = 3;
         while (i > 0)
         {
-            listPosX.Add(sizeBlockWidthX * i);
+            listPosX.Add(itemSpacingX  * i);
             i--;
         }
         while (j > 0)
         {
-            listPosX.Add(-sizeBlockWidthX * j);
+            listPosX.Add(-itemSpacingX  * j);
             j--;
         }
         return listPosX;
     }
-    public Sprite GetImage(string word)
+    public Sprite LoadItemSprite(string word)
     {
         string path = CONST.PATH_IMG_CUT_FRUITS + word;
         return ResourceManager.Instance.GetResource<Sprite>(path);
     }
 
-    public List<string> CreateWord(List<string> wordCurrent)
+    public List<string> GenerateWordSet(List<string> wordCurrent)
     {
         List<string> items = new List<string>();
         int randomIndex = Random.Range(0, 100);
@@ -290,38 +310,38 @@ IEnumerator GameLoop()
         {
             if (randomIndex > 50)
             {
-                items = ShuffleWord(wordCurrent, 2);
+                items = ShuffleAndPickWords(wordCurrent, 2);
             }
             else
             {
-                items = ShuffleWord(wordCurrent, 1);
+                items = ShuffleAndPickWords(wordCurrent, 1);
             }
         }
         if (wordCurrent.Count == 3)
         {
             if (randomIndex > 50)
             {
-                items = ShuffleWord(wordCurrent, 3);
+                items = ShuffleAndPickWords(wordCurrent, 3);
             }
             else
             {
-                items = ShuffleWord(wordCurrent, 2);
+                items = ShuffleAndPickWords(wordCurrent, 2);
             }
         }
         if (wordCurrent.Count == 4)
         {
             int randomNumber = Random.Range(3, 5);
-            items = ShuffleWord(wordCurrent, randomNumber);
+            items = ShuffleAndPickWords(wordCurrent, randomNumber);
             
         }
         if (wordCurrent.Count == 5)
         {
             int randomNumber = Random.Range(4, 6);
-            items = ShuffleWord(wordCurrent, randomNumber);
+            items = ShuffleAndPickWords(wordCurrent, randomNumber);
         }
         return items;
     }
-    public List<string> ShuffleWord(List<string> wordCurrent, int limit)
+    public List<string> ShuffleAndPickWords(List<string> wordCurrent, int limit)
     {
         List<string> shuffledWords = new List<string>();
         for (int i = 0; i < wordCurrent.Count; i++)
@@ -338,15 +358,19 @@ IEnumerator GameLoop()
         int minutes = Mathf.FloorToInt(timeLeft / 60);
         int seconds = Mathf.FloorToInt(timeLeft % 60);
         string formatted = $"{minutes}:{seconds:00}";
-        uiView.ShowTime(formatted);
+        cutFruitUI.ShowTime(formatted);
     }
     private void EffectTimeCountdown(int start)
     {
-        StartCoroutine(uiView.ShowTimeCount(start));
+        StartCoroutine(cutFruitUI.ShowTimeCount(start));
+    }
+    public void PlayCountdownSound()
+    {
+        SoundManager.Instance.PlayOneShotSound(SoundManager.Instance.chooseWord, 0.7f);
     }
     public void CreateExplode(ItemCutModel itemCut,ItemCutView itemCutView)
     {
-        if (!isPressed) return; 
+        if (!inputPressed ) return;
         float posX = itemCutView.GetComponent<RectTransform>().localPosition.x;
         float posY = itemCutView.GetComponent<RectTransform>().localPosition.y;
         ItemType itemType = itemCut.itemType;
@@ -356,69 +380,72 @@ IEnumerator GameLoop()
         Destroy(itemCutView.gameObject);
         if (itemType == ItemType.item)
         {
+            PlayOneShot(SoundManager.Instance.slice);
             bool isWord = IsWordCurrent(word);
             if (isWord)
             {
-                model.AddCombo();
-                model.CalculateScore();
-                uiView.AddShowcore(model.score);
-                if (model.combo >0) {
-                    uiView.ShowTextCombo(model.combo);
+                cutFruitModel.AddCombo();
+                cutFruitModel.CalculateScore();
+                cutFruitUI.AddShowcore(cutFruitModel.score);
+                if (cutFruitModel.combo >0) {
+                    cutFruitUI.ShowTextCombo(cutFruitModel.combo);
                 }
-                uiView.ShowTextPerfect(CONST.TEXT_PERFECT, HelperColor.Instance.GetColor(effectColor.Green), true);
+                cutFruitUI.ShowTextPerfect(CONST.TEXT_PERFECT, HelperColor.Instance.GetColor(EffectColor.Green), true);
             }
             else
             {
-                uiView.AddShowcore(-1);
-                model.SetDefaul();
-                uiView.ShowTextPerfect(CONST.TEXT_MISS, HelperColor.Instance.GetColor(effectColor.White));
+                cutFruitUI.AddShowcore(-1);
+                cutFruitModel.SetDefaul();
+                cutFruitUI.ShowTextPerfect(CONST.TEXT_MISS, HelperColor.Instance.GetColor(EffectColor.White));
             }
-            Color orginal = HelperColor.Instance.GetColorOnName(word);
-            Color decrease = HelperColor.Instance.DecreaseColor(orginal,ligthFactor);
-            ManagerParticelSystem.Instance.CreateParticelSystem(posX, posY, ManagerParticelSystem.Instance.explodeFruit, uiView.TranformExplode, 1f, orginal, decrease, true);
+            Color orginal = HelperColor.Instance.GetColorByFruitName(word);
+            Color decrease = HelperColor.Instance.DecreaseColor(orginal,lightenFactor);
+            ManagerParticelSystem.Instance.CreateParticleEffect(posX, posY, ManagerParticelSystem.Instance.fruitExplosionPrefab, cutFruitUI.TranformExplode, 1f, orginal, decrease, true);
         }
         else
         {
-            uiView.AddShowcore(-3);
-            model.SetDefaul();
-            uiView.ShowTextPerfect(CONST.TEXT_EXPLODE, HelperColor.Instance.GetColor(effectColor.Yellow));
-            ManagerParticelSystem.Instance.CreateParticelSystem(posX, posY, ManagerParticelSystem.Instance.explodeBomb, uiView.TranformExplode, 1f, Color.white,Color.white);
+            PlayOneShot(SoundManager.Instance.bomb);
+            cutFruitUI.AddShowcore(-3);
+            cutFruitModel.SetDefaul();
+            cutFruitUI.ShowTextPerfect(CONST.TEXT_EXPLODE, HelperColor.Instance.GetColor(EffectColor.Yellow));
+            ManagerParticelSystem.Instance.CreateParticleEffect(posX, posY, ManagerParticelSystem.Instance.bombExplosionPrefab, cutFruitUI.TranformExplode, 1f, Color.white,Color.white);
         }
     }
-
+    public void PlayOneShot(AudioClip audioClip)
+    {
+        SoundManager.Instance.PlayOneShotSound(audioClip);
+    }
     public bool IsWordCurrent(string word)
     {
-        return model.wordCurrent.Contains(word);
+        return cutFruitModel.wordCurrent.Contains(word);
     }
 
     public void AddToModel(ItemCutModel item,ItemCutView itemView)
     {
-        model.AddItem(item);
-        //model.AddController(itemView);
+        cutFruitModel.AddItem(item);
         AddController(itemView);
 
     }
     public void RemoveItem(ItemCutModel item, ItemCutView itemView) {
-        model.RemoveItem(item);
-        // model.RemoveController(itemView);
+        cutFruitModel.RemoveItem(item);
         RemoveController(itemView);
 
     }
     public void AddController(ItemCutView controller)
     {
-        listCutFruitsController.Add(controller);
+        activeItemView.Add(controller);
     }
     public void RemoveController(ItemCutView controller)
     {
-        listCutFruitsController.Remove(controller);
+        activeItemView.Remove(controller);
     }
     public void SetOnIsPress()
     {
-        isPressed = true;
+        inputPressed  = true;
     }
     public void SetOffIsPress()
     {
-        isPressed = false;
+        inputPressed  = false;
     }
     
     public TrailRenderer CreateTrail(TrailRenderer trail,GameObject TrailTranform, Vector3 pos)
@@ -432,4 +459,12 @@ IEnumerator GameLoop()
         TrailPoolManager.Instance.ReturnToPool(type, ps);
     }
 
+    public void PlayWordAppearSound()
+    {
+        SoundManager.Instance.PlayOneShotSound(SoundManager.Instance.wordApear,0.7f);
+    }
+    public void PressButton()
+    {
+        SoundManager.Instance.PressButton();
+    }
 }

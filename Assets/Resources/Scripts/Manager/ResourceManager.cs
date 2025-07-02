@@ -1,43 +1,4 @@
-﻿//using System.Collections.Generic;
-//using UnityEngine;
-//using Newtonsoft.Json;
-
-//public class ResourceManager : BaseManager<ResourceManager>
-//{
-//    public List<string> GetList(string path)
-//    {
-//        TextAsset jsonFile = Resources.Load<TextAsset>(path);
-
-//        if (jsonFile == null)
-//        {
-//            Debug.LogError("JSON file not found at: " + path);
-//            return new List<string>();
-//        }
-
-//        try
-//        {
-//            List<string> data = JsonConvert.DeserializeObject<List<string>>(jsonFile.text);
-//            return data;
-//        }
-//        catch (System.Exception e)
-//        {
-//            Debug.LogError("Failed to deserialize JSON: " + e.Message);
-//            return new List<string>();
-//        }
-//    }
-//    public Sprite GetImage(string fullPath)
-//    {
-//        Sprite sprite = Resources.Load<Sprite>(fullPath);
-//        if (sprite == null)
-//        {
-//            Debug.LogWarning("Không tìm thấy ảnh tại: " + fullPath);
-//        }
-//        return sprite;
-//    }
-
-//}
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
@@ -46,13 +7,12 @@ using System.IO;
 public class ResourceManager : BaseManager<ResourceManager>
 {
 
-    public T LoadJson<T>(string path)
+    public T LoadFromResources<T>(string path)
     {
         TextAsset jsonFile = Resources.Load<TextAsset>(path);
 
         if (jsonFile == null)
         {
-            Debug.LogError("JSON file not found at: " + path);
             return default(T);
         }
 
@@ -63,7 +23,6 @@ public class ResourceManager : BaseManager<ResourceManager>
         }
         catch (System.Exception e)
         {
-            Debug.LogError("Failed to deserialize JSON at " + path + ": " + e.Message);
             return default(T);
         }
     }
@@ -90,7 +49,7 @@ public class ResourceManager : BaseManager<ResourceManager>
     }
 
 
-    public void SaveJson<T>(string fileName, string key, T value)
+    public void SaveToFile<T>(string fileName, string key, T value)
     {
         try
         {
@@ -121,7 +80,7 @@ public class ResourceManager : BaseManager<ResourceManager>
     }
 
 
-    public T LoadJson<T>(string fileName, string key)
+    public T LoadFromFile<T>(string fileName, string key)
     {
         string filePath = Path.Combine(Application.persistentDataPath, fileName);
 
@@ -136,13 +95,11 @@ public class ResourceManager : BaseManager<ResourceManager>
                 {
                     object raw = data[key];
 
-                    // Nếu là kiểu string thì ép kiểu luôn
                     if (typeof(T) == typeof(string))
                     {
                         return (T)raw;
                     }
 
-                    // Còn lại thì deserialize như cũ
                     return JsonConvert.DeserializeObject<T>(raw.ToString());
                 }
             }
@@ -155,7 +112,7 @@ public class ResourceManager : BaseManager<ResourceManager>
         return default(T);
     }
 
-    public void CreateStoreJsonIfNotExists()
+    public void EnsureStoreFileExists()
     {
         string fileName = "STORE.json";
         string filePath = Path.Combine(Application.persistentDataPath, fileName);
@@ -177,5 +134,26 @@ public class ResourceManager : BaseManager<ResourceManager>
             Debug.Log("STORE.json already exists at: " + filePath);
         }
     }
+    public void EnsureRankFileExists()
+    {
+        string fileName = "RANK.json";
+        string filePath = Path.Combine(Application.persistentDataPath, fileName);
 
+        if (!File.Exists(filePath))
+        {
+            List<User> listUser = LoadFromResources<List<User>>(CONST.PATH_RANK_ASOBLUTE);
+            Dictionary<string, object> defaultData = new Dictionary<string, object>
+            {
+                { CONST.KEY_RANK, listUser }
+            };
+            string json = JsonConvert.SerializeObject(defaultData, Formatting.Indented);
+            File.WriteAllText(filePath, json);
+
+            Debug.Log("rank.json created at: " + filePath);
+        }
+        else
+        {
+            Debug.Log("rank.json already exists at: " + filePath);
+        }
+    }
 }

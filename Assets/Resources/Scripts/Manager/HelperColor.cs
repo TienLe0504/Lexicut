@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum effectColor
+public enum EffectColor
 {
     Blue,
     Yellow,
@@ -27,89 +27,50 @@ public enum effectColor
 
 public class HelperColor : BaseManager<HelperColor>
 {
+    [Header("Fruit color mapping")]
     public ListFruitColor listFruitColor;
-    public Color GetColor(effectColor dotColor)
+    public Color GetColor(EffectColor color)
     {
-        Color colorToUse = Color.white;
-        switch (dotColor)
+        switch (color)
         {
-            case effectColor.Blue:
-                colorToUse = Color.blue;
-                break;
-            case effectColor.Yellow:
-                colorToUse = Color.yellow;
-                break;
-            case effectColor.Purple:
-                colorToUse = new Color(0.5f, 0f, 0.5f);
-                break;
-            case effectColor.Green:
-                colorToUse = Color.green;
-                break;
-            case effectColor.Red:
-                colorToUse = Color.red;
-                break;
-            case effectColor.Orange:
-                colorToUse = new Color(1f, 0.65f, 0f);
-                break;
-            case effectColor.Black:
-                colorToUse = Color.black;
-                break;
-            case effectColor.White:
-                colorToUse = Color.white;
-                break;
-            case effectColor.Brown:
-                colorToUse = new Color(0.6f, 0.3f, 0.1f);
-                break;
-            case effectColor.Pink:
-                colorToUse = new Color(1f, 0.4f, 0.7f);
-                break;
-            case effectColor.Gray:
-                colorToUse = Color.gray;
-                break;
-            case effectColor.Cyan:
-                colorToUse = Color.cyan;
-                break;
-            case effectColor.Magenta:
-                colorToUse = Color.magenta;
-                break;
-            case effectColor.Lime:
-                colorToUse = new Color(0.75f, 1f, 0f);
-                break;
-            case effectColor.Gold:
-                colorToUse = new Color(1f, 0.84f, 0f);
-                break;
-            case effectColor.Teal:
-                colorToUse = new Color(0f, 0.5f, 0.5f);
-                break;
-            case effectColor.Navy:
-                colorToUse = new Color(0f, 0f, 0.5f);
-                break;
-            case effectColor.Maroon:
-                colorToUse = new Color(0.5f, 0f, 0f);
-                break;
-            case effectColor.Olive:
-                colorToUse = new Color(0.5f, 0.5f, 0f);
-                break;
+            case EffectColor.Blue: return Color.blue;
+            case EffectColor.Yellow: return Color.yellow;
+            case EffectColor.Purple: return new Color(0.5f, 0f, 0.5f);
+            case EffectColor.Green: return Color.green;
+            case EffectColor.Red: return Color.red;
+            case EffectColor.Orange: return new Color(1f, 0.65f, 0f);
+            case EffectColor.Black: return Color.black;
+            case EffectColor.White: return Color.white;
+            case EffectColor.Brown: return new Color(0.6f, 0.3f, 0.1f);
+            case EffectColor.Pink: return new Color(1f, 0.4f, 0.7f);
+            case EffectColor.Gray: return Color.gray;
+            case EffectColor.Cyan: return Color.cyan;
+            case EffectColor.Magenta: return Color.magenta;
+            case EffectColor.Lime: return new Color(0.75f, 1f, 0f);
+            case EffectColor.Gold: return new Color(1f, 0.84f, 0f);
+            case EffectColor.Teal: return new Color(0f, 0.5f, 0.5f);
+            case EffectColor.Navy: return new Color(0f, 0f, 0.5f);
+            case EffectColor.Maroon: return new Color(0.5f, 0f, 0f);
+            case EffectColor.Olive: return new Color(0.5f, 0.5f, 0f);
+            default: return Color.white;
         }
-        return colorToUse;
     }
-    public effectColor RandomColor(bool isNotColor = false)
+    public EffectColor RandomColor(bool excludeCertainColors = false)
     {
-        var values = new List<effectColor>((effectColor[])System.Enum.GetValues(typeof(effectColor)));
+        var values = new List<EffectColor>((EffectColor[])System.Enum.GetValues(typeof(EffectColor)));
 
-        if (isNotColor)
+        if (excludeCertainColors)
         {
-            values.Remove(effectColor.Red);
-            values.Remove(effectColor.Black);
-            values.Remove(effectColor.White);
+            values.Remove(EffectColor.Red);
+            values.Remove(EffectColor.Black);
+            values.Remove(EffectColor.White);
         }
 
-        int randomIndex = Random.Range(0, values.Count);
-        return values[randomIndex];
+        return values[Random.Range(0, values.Count)];
     }
 
 
-    public Color GetColorOnName(string fruitName)
+    public Color GetColorByFruitName(string fruitName)
     {
         foreach (var pair in listFruitColor.fruitColors)
         {
@@ -119,7 +80,7 @@ public class HelperColor : BaseManager<HelperColor>
             }
         }
 
-        Debug.LogWarning("Fruit name not found in ListFruitColor: " + fruitName);
+        Debug.LogWarning($"Fruit '{fruitName}' not found in ListFruitColor.");
         return Color.white;
     }
 
@@ -130,21 +91,14 @@ public class HelperColor : BaseManager<HelperColor>
         return Color.Lerp(color, Color.white, lightenFactor);
     }
 
-    public effectColor MapTypeToEffectColor(string colorString)
+    public EffectColor MapTypeToEffectColor(string colorString)
     {
         switch (colorString)
         {
-            case "GreenColor":
-                return effectColor.Green;
-
-            case "YellowColor":
-                return effectColor.Yellow;
-
-            case "OrangeColor":
-                return effectColor.Orange;
-
-            default:
-                return effectColor.Gray; 
+            case "GreenColor": return EffectColor.Green;
+            case "YellowColor": return EffectColor.Yellow;
+            case "OrangeColor": return EffectColor.Orange;
+            default: return EffectColor.Gray; 
         }
     }
 

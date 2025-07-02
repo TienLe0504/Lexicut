@@ -14,13 +14,26 @@ public class OverlapBuyItemController : MonoBehaviour
     }
     public bool BuyItem()
     {
-        if(ManagerGame.Instance.gold < inventory.gold || inventory.isUsed)
+        PressButton();
+        if (ManagerGame.Instance.gold < inventory.gold || inventory.isUsed)
         {
 
             return false;
         }
 
         ManagerGame.Instance.inventory.Add(inventory.typeInventory.ToString());
+        Inventory item = CloneItem();
+        ManagerGame.Instance.InventoryData.Add(item);
+        ResourceManager.Instance.SaveToFile<List<string>>(CONST.KEY_FILENAME_STORE, CONST.KEY_INVENTORY, ManagerGame.Instance.inventory);
+
+        itemShopController.BuyItemSuccess();
+        this.Broadcast(EventID.BuyItem, inventory.gold);
+        return true;
+
+    }
+
+    private Inventory CloneItem()
+    {
         Inventory item = new Inventory();
         item.typeInventory = inventory.typeInventory;
         item.name = inventory.name;
@@ -28,14 +41,11 @@ public class OverlapBuyItemController : MonoBehaviour
         item.gold = inventory.gold;
         item.typeChoice = inventory.typeChoice;
         item.isUsed = false;
-        ManagerGame.Instance.InventoryData.Add(item);
-        //ResourceManager.Instance.SaveJson<List<string>>(CONST.PATH_STORE_ABSOLUTE, CONST.KEY_INVENTORY, ManagerGame.Instance.inventory);
-        ResourceManager.Instance.SaveJson<List<string>>(CONST.KEY_FILENAME_STORE, CONST.KEY_INVENTORY, ManagerGame.Instance.inventory);
-
-        itemShopController.BuyItemSuccess();
-        this.Broadcast(EventID.BuyItem, inventory.gold);
-        return true;
-       
+        return item;
     }
 
+    public void PressButton()
+    {
+        SoundManager.Instance.PressButton();
+    }
 }

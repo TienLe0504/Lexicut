@@ -9,10 +9,10 @@ using UnityEngine.UI;
 public class OverlapUseItem : BaseOverlap
 {
     public OverlapUseItemController controller;
-    public Button btnClose;
-    public Image imgitem;
     public TextMeshProUGUI txtName;
+    public Button btnClose;
     public Button btnUse;
+    public Image imgitem;
     private Tween openTween;
     private Tween closeTween;
     public override void Hide()
@@ -21,17 +21,17 @@ public class OverlapUseItem : BaseOverlap
     }
     private void OnEnable()
     {
-        this.Register(EventID.InActiveOverlapUseItem, CloseOverlap);
+        this.Register(EventID.DeactivateOverlappingItem, CloseOverlap);
     }
     private void OnDisable()
     {
-        this.Unregister(EventID.InActiveOverlapUseItem, CloseOverlap);
+        this.Unregister(EventID.DeactivateOverlappingItem, CloseOverlap);
     }
     public override void Init()
     {
         base.Init();
         btnUse.onClick.AddListener(()=>OnClickUseItem());
-        btnClose.onClick.AddListener(() => CloseOverlap());
+        btnClose.onClick.AddListener(() => CloseOverlap(true));
     }
 
     public override void Show(object data)
@@ -82,6 +82,12 @@ public class OverlapUseItem : BaseOverlap
 
     public void CloseOverlap(object data = null)
     {
+        if (data is bool isPressButton) {
+           if (isPressButton)
+            {
+                controller.PressButton();
+            }
+        }
         RectTransform rectTransform = this.GetComponent<RectTransform>();
 
         if (openTween != null && openTween.IsActive()) openTween.Kill();

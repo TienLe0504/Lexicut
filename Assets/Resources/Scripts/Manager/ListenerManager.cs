@@ -1,37 +1,50 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 public enum EventID
 {
+    // === System / Default ===
     None,
     Back,
-    SendImage,
-    HanldeCell,
-    moves,
-    sendWordController,
-    sendWordUI,
-    setupGameWordChainUI,
-    playGameAgain,
-    recieveCategory,
-    recieveWord,
-    recieveAnswer,
-    showPopupEndGame,
-    ShowEndGame,
-    ShowBG,
-    ActiveBGShop,
-    InActiveBGShop,
-    OpenBGBuyItem,
-    RecieveInventory,
-    SetInActiveStore,
-    SetActiveStore,
-    BuyItem,
-    ShowBtnInventory,
-    UpdateStatusItem,
-    InActiveOverlapUseItem,
-    WordChainGame,
+    Moves,
 
+    // === Word Chain Game Events ===
+    WordChainGame,
+    SendWordToController,
+    SendWordToUI,
+    SetupWordChainGameUI,
+    ReceiveCategory,
+    ReceiveWord,
+    ReceiveAnswer,
+    PlayGameAgain,
+
+    // === Game End Events ===
+    ShowEndGamePopup,       // Hiện popup khi kết thúc game
+    ShowEndGameScreen,      // Hiện màn hình kết thúc game
+
+    // === UI / Background Shop Events ===
+    ShowBackground,              // Hiện nền
+    ActivateBackgroundShop,      // Bật UI shop nền
+    DeactivateBackgroundShop,    // Tắt UI shop nền
+    OpenBackgroundItemShop,      // Mở UI mua item nền
+
+    // === Inventory Events ===
+    ReceiveInventory,            // Nhận dữ liệu inventory từ file hoặc server
+    SetStoreInactive,            // Ẩn cửa hàng
+    SetStoreActive,              // Hiện cửa hàng
+    ShowInventoryButton,         // Hiện nút chuyển inventory
+    UpdateItemStatus,            // Cập nhật trạng thái item (đã dùng / chưa dùng)
+    DeactivateOverlappingItem,   // Tắt item trùng lặp khi chọn
+
+    // === Shop Actions ===
+    BuyItem,                     // Mua vật phẩm
+
+    // === Miscellaneous ===
+    SendImage,                   // Gửi hình ảnh (nếu có dùng)
+    HandleCell,                  // Xử lý tương tác với ô trong UI
+    ShowRankButton               // Hiện nút bảng xếp hạng
 }
 public class ListenerManager : BaseManager<ListenerManager>
 {

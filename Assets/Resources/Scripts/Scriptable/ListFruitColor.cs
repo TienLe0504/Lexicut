@@ -9,13 +9,13 @@ public class ListFruitColor : ScriptableObject
     public class FruitColorPair
     {
         public string fruit;
-        public effectColor color;
+        public EffectColor color;
     }
     public List<FruitColorPair> fruitColors = new List<FruitColorPair>();
 
-    public Dictionary<string, effectColor> ToDictionary()
+    public Dictionary<string, EffectColor> ToDictionary()
     {
-        Dictionary<string, effectColor> dict = new Dictionary<string, effectColor>();
+        Dictionary<string, EffectColor> dict = new Dictionary<string, EffectColor>();
         foreach (var pair in fruitColors)
         {
             if (!dict.ContainsKey(pair.fruit))

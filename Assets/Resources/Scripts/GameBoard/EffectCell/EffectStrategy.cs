@@ -9,9 +9,9 @@ public class EffectStrategy
     private Effect effect;
     private Dictionary<Vector2, CellController> cellModels;
     private int rows, columns;
-    private effectColor color;
+    private EffectColor color;
     private MonoBehaviour runner;
-    public void SetParameters(ref MonoBehaviour runner,ref Dictionary<Vector2,CellController> cellModels,ref int rows,ref int columns,ref effectColor color)
+    public void SetParameters(ref MonoBehaviour runner,ref Dictionary<Vector2,CellController> cellModels,ref int rows,ref int columns,ref EffectColor color)
     {
         this.cellModels = cellModels;
         this.rows = rows;

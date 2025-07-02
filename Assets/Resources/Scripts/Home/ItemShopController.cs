@@ -19,7 +19,9 @@ public class ItemShopController : MonoBehaviour
         string path = CONST.KEY_PATH_IMG_SHOP+ name;
         return ResourceManager.Instance.GetResource<Sprite>(path);
     }
-    public virtual void PressButton(){}
+    public virtual void PressButton(){
+      SoundManager.Instance.PressButton();
+    }
 
     public void BuyItemSuccess(object data = null)
     {

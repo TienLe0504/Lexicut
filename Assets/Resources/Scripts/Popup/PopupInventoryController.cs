@@ -8,12 +8,12 @@ public class PopupInventoryController : MonoBehaviour
     public PopupInventoryModel popupInventoryModel = new PopupInventoryModel();
     private void OnEnable()
     {
-        this.Register(EventID.UpdateStatusItem, UpdateStatusItem);
+        this.Register(EventID.UpdateItemStatus, UpdateStatusItem);
 
     }
     private void OnDisable()
     {
-        this.Unregister(EventID.UpdateStatusItem, UpdateStatusItem);
+        this.Unregister(EventID.UpdateItemStatus, UpdateStatusItem);
     }
     public void AddItem(GameObject item)
     {
@@ -33,5 +33,9 @@ public class PopupInventoryController : MonoBehaviour
                 }
             }
         }
+    }
+    public void PressButton()
+    {
+        SoundManager.Instance.PressButton();
     }
 }

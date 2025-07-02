@@ -23,7 +23,7 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: afd550bca030d7849948838b59c87a6c, type: 3}
     gold: 1200
     typeInventory: 4
-    isUsed: 0
+    isUsed: 1
     typeChoice: 0
   - name: Yellow Trail
     image: {fileID: 21300000, guid: 355d0634ee45b5c4a90c1131b16355ff, type: 3}

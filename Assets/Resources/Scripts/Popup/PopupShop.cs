@@ -28,22 +28,20 @@ public class PopupShop : BasePopup
         btnClose.onClick.AddListener(() => CloseShopTranform());
         SetInActiveBG();
         this.Broadcast(EventID.Back);
-        this.Broadcast(EventID.ShowBtnInventory);
-        //this.Register(EventID.InActiveBGShop, SetInActiveBG);
-        //this.Register(EventID.ActiveBGShop, SetActiveBG);
+        this.Broadcast(EventID.ShowInventoryButton);
         CreateShop(ManagerGame.Instance.shopColor, parrentColor);
         CreateShop(ManagerGame.Instance.shopEffect, parrentEffect);
         CreateShop(ManagerGame.Instance.shopTrail, parrentTrail);
     }
     public void OnEnable()
     {
-        this.Register(EventID.InActiveBGShop, SetInActiveBG);
-        this.Register(EventID.ActiveBGShop, SetActiveBG);
+        this.Register(EventID.DeactivateBackgroundShop, SetInActiveBG);
+        this.Register(EventID.ActivateBackgroundShop, SetActiveBG);
     }
     public void OnDisable()
     {
-        this.Unregister(EventID.ActiveBGShop, SetActiveBG);
-        this.Unregister(EventID.InActiveBGShop, SetInActiveBG);
+        this.Unregister(EventID.ActivateBackgroundShop, SetActiveBG);
+        this.Unregister(EventID.DeactivateBackgroundShop, SetInActiveBG);
     }
     public override void Show(object data)
     {
@@ -92,11 +90,11 @@ public class PopupShop : BasePopup
         RectTransform rectTransform = this.GetComponent<RectTransform>();
         if (openTween != null && openTween.IsActive()) openTween.Kill();
         if (closeTween != null && closeTween.IsActive()) closeTween.Kill();
-
+        SoundManager.Instance.PressButton();    
         rectTransform.localScale = Vector3.one;
         closeTween = rectTransform.DOScale(0f, 0.3f).SetEase(Ease.InBack).OnComplete(() =>
         {
-            this.Broadcast(EventID.SetActiveStore);
+            this.Broadcast(EventID.SetStoreActive);
             Hide();
         });
     }

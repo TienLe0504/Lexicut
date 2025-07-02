@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class VerticelAboveEffect : Effect
 {
-    public void PerformEffect(ref MonoBehaviour runner,ref Dictionary<Vector2, CellController> cellModels, int rows, int columns, effectColor color)
+    public void PerformEffect(ref MonoBehaviour runner,ref Dictionary<Vector2, CellController> cellModels, int rows, int columns, EffectColor color)
     {
         runner.StartCoroutine(PerformWaveCoroutine(runner, cellModels, columns, rows, color));
     }
 
-    private IEnumerator PerformWaveCoroutine(MonoBehaviour runner, Dictionary<Vector2, CellController> cellModels, int columns, int rows, effectColor color)
+    private IEnumerator PerformWaveCoroutine(MonoBehaviour runner, Dictionary<Vector2, CellController> cellModels, int columns, int rows, EffectColor color)
     {
         int numberZero = 0;
 
@@ -23,7 +23,7 @@ public class VerticelAboveEffect : Effect
     }
 
 
-    private IEnumerator CreateWaveColor(Dictionary<Vector2, CellController> cellModels, effectColor color, int rows, int columns, int numberZero, bool shouldDecrease, bool normalColor, float strength)
+    private IEnumerator CreateWaveColor(Dictionary<Vector2, CellController> cellModels, EffectColor color, int rows, int columns, int numberZero, bool shouldDecrease, bool normalColor, float strength)
     {
         // Duyệt qua từng cột để tạo hiệu ứng sóng từ trái sang phải
         for (int i = 0; i < rows; i++)
@@ -58,7 +58,7 @@ public class VerticelAboveEffect : Effect
 
 
     }
-    public void CreateEffect(int x, int y, Dictionary<Vector2, CellController> cellControllers, effectColor color, bool shouldDecrease, bool normalColor, float strength, float columns)
+    public void CreateEffect(int x, int y, Dictionary<Vector2, CellController> cellControllers, EffectColor color, bool shouldDecrease, bool normalColor, float strength, float columns)
     {
         int currentX = x;
         int currentY = y;
@@ -75,7 +75,7 @@ public class VerticelAboveEffect : Effect
 
 
     private void ColorCell(ref int x, ref int y, ref Dictionary<Vector2, CellController> cellControllers,
-                           ref effectColor color, ref float strength, ref bool shouldDecrease, ref bool normalColor)
+                           ref EffectColor color, ref float strength, ref bool shouldDecrease, ref bool normalColor)
     {
         Vector2 key = new Vector2(x, y);
         if (!cellControllers.ContainsKey(key))
@@ -85,7 +85,6 @@ public class VerticelAboveEffect : Effect
         }
 
         CellController cellController = cellControllers[key];
-        //Color getColor = cellController.GetColor(color);
         Color getColor = HelperColor.Instance.GetColor(color);
         cellController.CreateEffect(ref getColor, ref strength, ref shouldDecrease, ref normalColor);
     }

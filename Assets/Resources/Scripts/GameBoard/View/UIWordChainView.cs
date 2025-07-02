@@ -30,7 +30,7 @@ public class UIWordChainView : MonoBehaviour
     private void Awake()
     {
         numberMoves = movesCount;
-        this.Register(EventID.sendWordController, Recieve);
+        this.Register(EventID.SendWordToController, Recieve);
         controller = GetComponent<UIWordchainController>();
         bgImage.rectTransform.sizeDelta = new Vector2(ManagerGame.Instance.WidthScreen, ManagerGame.Instance.HeightScreen);
         ShadowBG.rectTransform.sizeDelta = new Vector2(ManagerGame.Instance.WidthScreen, ManagerGame.Instance.HeightScreen);
@@ -175,6 +175,7 @@ public class UIWordChainView : MonoBehaviour
     public void StopGame()
     {
         ShowBG();
+        controller.PressButton();
         stopGame.SetActive(true);
         stopGame.transform.localScale = Vector3.zero;
         stopGame.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack).OnComplete(() => {
@@ -182,11 +183,13 @@ public class UIWordChainView : MonoBehaviour
     }
     public void ContinueGame()
     {
+        controller.PressButton();
         ShadowBG.gameObject.SetActive(false);
         stopGame.SetActive(false);
     }
     public void ExitGame()
     {
+        controller.PressButton();
         controller.ExitGame();
     }
     public void PlayGameAgain()

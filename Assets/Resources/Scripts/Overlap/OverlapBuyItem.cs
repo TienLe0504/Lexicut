@@ -7,20 +7,28 @@ using UnityEngine.UI;
 
 public class OverlapBuyItem : BaseOverlap
 {
+    // === UI References ===
     public Image imgItem;
     public TextMeshProUGUI itemName;
     public TextMeshProUGUI itemPrice;
+    public TextMeshProUGUI txtNotEnoughMoney;
     public Button btnBuy;
     public Button btnClose;
-    public TextMeshProUGUI txtNotEnoughMoney;
+
+    // === Controller Reference ===
+    public OverlapBuyItemController controller;
+
+    // === Tween Animations ===
     private Tween openTween;
     private Tween closeTween;
-    public OverlapBuyItemController controller;
+    public Tween buyItem;
+    public Tween fadeItem;
+
 
 
     public override void Hide()
     {
-        this.Broadcast(EventID.InActiveBGShop);
+        this.Broadcast(EventID.DeactivateBackgroundShop);
         base.Hide();
     }
 
@@ -36,6 +44,7 @@ public class OverlapBuyItem : BaseOverlap
 
         this.gameObject.SetActive(true);
         base.Show(data);
+        txtNotEnoughMoney.gameObject.SetActive(false);
         SetupData(data);
         OpenOverlap();
     }
@@ -68,14 +77,17 @@ public class OverlapBuyItem : BaseOverlap
     }
     public void ShowNotEnoughMoney()
     {
+        if (buyItem != null && buyItem.IsActive()) buyItem.Kill();
+        if (fadeItem != null && fadeItem.IsActive()) fadeItem.Kill();
+        txtNotEnoughMoney.gameObject.SetActive(true);
         txtNotEnoughMoney.text = "Not enough money";
         RectTransform rectTransform = txtNotEnoughMoney.GetComponent<RectTransform>();
-        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, 0);
+        rectTransform.anchoredPosition = new Vector2(0, 0);
         Color color = txtNotEnoughMoney.color;
         color.a = 1;
         txtNotEnoughMoney.color = color;
-        txtNotEnoughMoney.transform.DOLocalMoveY(200f, 0.4f).SetRelative(false).SetEase(Ease.OutQuad);
-        txtNotEnoughMoney.DOFade(0f, 0.4f);
+        buyItem = txtNotEnoughMoney.transform.DOLocalMoveY(200f, 1.3f).SetRelative(false).SetEase(Ease.OutQuad);
+        fadeItem = txtNotEnoughMoney.DOFade(0f, 1.3f);
 
     }
     public void OpenOverlap()
@@ -91,6 +103,7 @@ public class OverlapBuyItem : BaseOverlap
 
     public void CloseOverlap(object data = null)
     {
+        controller.PressButton();
         RectTransform rectTransform = this.GetComponent<RectTransform>();
 
         if (openTween != null && openTween.IsActive()) openTween.Kill();
@@ -99,7 +112,7 @@ public class OverlapBuyItem : BaseOverlap
         rectTransform.localScale = Vector3.one;
         closeTween = rectTransform.DOScale(0f, 0.3f).SetEase(Ease.InBack).OnComplete(() =>
         {
-            this.Broadcast(EventID.InActiveBGShop);
+            this.Broadcast(EventID.DeactivateBackgroundShop);
             base.Hide();
         });
     }

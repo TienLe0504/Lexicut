@@ -8,7 +8,6 @@ using UnityEngine.UI;
 
 public class WinOrLoseView : MonoBehaviour
 {
-    public Image imgBackground;
     public float posX = 0f;
     public float posY = 200f;
     public TextMeshProUGUI title;
@@ -16,17 +15,14 @@ public class WinOrLoseView : MonoBehaviour
     public TextMeshProUGUI txtGold;
     public GameObject tranformParrentImg;
     public GameObject tranformParrentFireWork;
-    public Button btnHome;
-    public Button btnContinue;
     public GameObject starWin;
     public GameObject starLose;
-    public List<Image> listImgStar = new List<Image>();
-    //public List<string> word = new List<string>();
-    //public List<string> answer = new List<string>();
+    public Button btnHome;
+    public Button btnContinue;
+    public Image imgBackground;
     public Image imgItemPrefab;
-    //public string category;
     public WinOrLosePopup winOrLoseController;
-    //public bool isFrire = false;
+    public List<Image> listImgStar = new List<Image>();
     public void Awake()
     {
         SetupTransform();
@@ -40,24 +36,6 @@ public class WinOrLoseView : MonoBehaviour
         this.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, ManagerGame.Instance.HeightScreen);
 
     }
-    //public void ReciveCateGory(string value)
-    //{
-    //        category = value;
-    //    Debug.Log(" co data loaij" + category);
-
-    //}
-    //public void Recieve(List<string> value)
-    //{
-
-    //        word = value;
-
-    //}
-    //public void SetupGame(List<string> value)
-    //{
-
-    //    answer = value;
-    //    ShowWinOrLose();
-    //}
     public void ShowWinOrLose(string text, bool isWin, string txtAnswer, List<string>word,string category,int star, int gold)
     {
 
@@ -93,63 +71,9 @@ public class WinOrLoseView : MonoBehaviour
                   ShowTextContent(txtGold, 0.4f);
               }
           });
+        winOrLoseController.PlaySoundWinGame(isWin);
 
     }
-    //public void ShowWinOrLose()
-    //{
-    //    isFrire = false;
-    //    if (answer.Count<5)
-    //    {
-    //        title.text = "You Win!";
-    //        starWin.SetActive(true);
-    //        starLose.SetActive(false);
-    //        listImgStar = new List<Image>();
-    //        listImgStar = starWin.GetComponentsInChildren<Image>().ToList();
-    //        isFrire = true;
-    //    }
-    //    else
-    //    {
-    //        title.text = "You Lose!";
-    //        starLose.SetActive(true);
-    //        starWin.SetActive(false);   
-    //        listImgStar = new List<Image>();
-    //        listImgStar = starLose.GetComponentsInChildren<Image>().ToList();
-    //    }
-    //    SetupText();
-    //    SetActiveFalseStar();
-    //    RectTransform rt = this.GetComponent<RectTransform>();
-
-    //    rt.DOAnchorPos(new Vector2(0, posY), 1.2f)
-    //      .SetEase(Ease.OutQuad)
-    //      .OnComplete(() =>
-    //      {
-    //          SetupStar();
-    //          SetupImg();
-    //          ShowTextContent();
-    //          if (isFrire)
-    //          {
-    //              ShowFireWork();
-    //          }
-    //      });
-
-    //}
-    //public void SetupText()
-    //{
-    //    if (word.Count < 5)
-    //    {
-    //        word.Add("Empty");
-    //        word.Add("Empty");
-    //        word.Add("Empty");
-    //        word.Add("Empty");
-    //    }
-    //    Debug.Log("word: " + string.Join(", ", word));
-    //    textContent.text = "1. " + word[0] + " - "+
-    //                       "2. " + word[1] + "\n" +
-    //                       "3. " + word[2] + " - "+
-    //                       "4. " + word[3] + "\n" +
-    //                       "5. " + word[4] ;
-    //    textContent.gameObject.SetActive(false);
-    //}
     public void SetupText(string text, string textGold)
     {
 
@@ -210,7 +134,6 @@ public class WinOrLoseView : MonoBehaviour
             Image img = Instantiate(imgItemPrefab, tranformParrentImg.transform);
             string path = CONST.PATH_IMG +category+"/" + item;
             Debug.Log(" path " + path);
-            //Sprite sprite = ResourceManager.Instance.GetImage(path);
             Sprite sprite = ResourceManager.Instance.GetResource<Sprite>(path);
 
             img.sprite = sprite;
@@ -221,28 +144,6 @@ public class WinOrLoseView : MonoBehaviour
             });
         }
     }
-    //public void SetupStar()
-    //{
-    //    if (answer.Count == 5)
-    //    {
-    //        CreatStarEffect(3);
-
-    //    }
-    //    if (answer.Count == 0)
-    //    {
-    //        CreatStarEffect(3);
-
-    //    }
-    //    if (answer.Count<=2)
-    //    {
-    //        CreatStarEffect(2);
-    //    }
-    //    if (answer.Count <= 4)
-    //    {
-
-    //        CreatStarEffect(1);
-    //    }
-    //}
     public void SetupStar(int star)
     {
         CreatStarEffect(star);
@@ -287,12 +188,12 @@ public class WinOrLoseView : MonoBehaviour
         float temp = 30f;
         while(temp > 0f)
         {
-            int i = ManagerParticelSystem.Instance.firework.Count() - 1;
+            int i = ManagerParticelSystem.Instance.fireworkPrefabs.Count() - 1;
             while (i > -1)
             {
-                Vector2 pos = ManagerParticelSystem.Instance.posFireword[i];
-                GameObject firework = ManagerParticelSystem.Instance.firework[i];
-                ManagerParticelSystem.Instance.CreateParticelSystem(pos.x, pos.y, firework, tranformParrentFireWork, 1.5f, Color.white, Color.white);
+                Vector2 pos = ManagerParticelSystem.Instance.fireworkPositions[i];
+                GameObject firework = ManagerParticelSystem.Instance.fireworkPrefabs[i];
+                ManagerParticelSystem.Instance.CreateParticleEffect(pos.x, pos.y, firework, tranformParrentFireWork, 1.5f, Color.white, Color.white);
                 yield return new WaitForSeconds(1.5f);
                 i--;
                 temp -= 1f;

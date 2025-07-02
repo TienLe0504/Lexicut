@@ -8,19 +8,6 @@ public class WinOrLosePopup : BasePopup
     public WinOrLoseView uiView;
     public bool isWin;
     public string textTitle;
-
-    //private void OnEnable()
-    //{
-    //    this.Register(EventID.recieveCategory, ReciveCateGory);
-    //    this.Register(EventID.recieveWord, RecieveWord);
-    //    this.Register(EventID.recieveAnswer, SetupGame);
-    //}
-    //private void OnDisable()
-    //{
-    //    this.Unregister(EventID.recieveCategory, ReciveCateGory);
-    //    this.Unregister(EventID.recieveWord, RecieveWord);
-    //    this.Unregister(EventID.recieveAnswer, SetupGame);
-    //}
     public override void Init()
     {
         base.Init();
@@ -34,15 +21,11 @@ public class WinOrLosePopup : BasePopup
         base.Show(data);
         if(data is DataPopup value)
         {
-            //ReciveCateGory(value.category);
-            //RecieveWord(value.word);
-            Debug.Log("value " + value);
             model.SetUp(value.word, value.answer, value.category, value.gold);
             StartShowPopup();
             SetupText();
             SetupStar();
             uiView.ShowWinOrLose(textTitle, isWin, model.textAnswer, model.word, model.category, model.star,model.gold);
-            //SetupGame(value.answer);
         }
     }
     public void StartShowPopup()
@@ -102,32 +85,36 @@ public class WinOrLosePopup : BasePopup
 
         }
     }
-
-    //public void ReciveCateGory(string data)
-    //{
-    //    Debug.Log("----- category : "+data);
-    //    uiView.ReciveCateGory(data);
-
-    //}
-    //public void RecieveWord(List<string> value)
-    //{
-    //        uiView.Recieve(value);
-
-    //}
-    //public void SetupGame(List<string> value)
-    //{
-
-    //        uiView.SetupGame(value);
-
-    //}
     public void PressHome()
     {
+        SoundManager.Instance.PressButton();
         UIManager.Instance.ShowScreen<HomeScreen>(model.gold);
         Hide();
+        SoundManager.Instance.PlayLoopingMusic(SoundManager.Instance.backgroundGame);
     }
     public void PressContinue()
     {
+        SoundManager.Instance.PressButton();
         UIManager.Instance.ShowScreen<WordChainGame>(model.category);
         Hide();
+        SoundManager.Instance.PlayLoopingMusic(SoundManager.Instance.backgroundGame);
+    }
+    public void PlaySoundWinGame(bool isWin)
+    {
+        SoundManager.Instance.StopLoopingMusic();
+        if (isWin)
+        {
+            PlaySoundOneShot(SoundManager.Instance.winGame);
+        }
+        else
+        {
+            PlaySoundOneShot(SoundManager.Instance.loseGame);
+
+        }
+    }
+    public void PlaySoundOneShot(AudioClip audio)
+    {
+        SoundManager.Instance.PlayOneShotSound(audio);
+
     }
 }

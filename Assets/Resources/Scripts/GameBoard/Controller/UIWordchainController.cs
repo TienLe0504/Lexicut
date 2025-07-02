@@ -11,24 +11,18 @@ public class UIWordchainController : MonoBehaviour
     private void Awake()
     {
         uiView = GetComponent<UIWordChainView>();
-        //this.Register(EventID.SendImage, OnReceiveImage);
-        //this.Register(EventID.moves, CalculateMoves);
-        //this.Register(EventID.sendWordUI,Recieve);
-
     }
     private void OnEnable()
     {
         this.Register(EventID.SendImage, OnReceiveImage);
-        this.Register(EventID.moves, CalculateMoves);
-        this.Register(EventID.sendWordUI, Recieve);
-        //this.Register(EventID.ShowBG,ShowBG);
+        this.Register(EventID.Moves, CalculateMoves);
+        this.Register(EventID.SendWordToUI, Recieve);
     }
     private void OnDisable()
     {
         this.Unregister(EventID.SendImage, OnReceiveImage);
-        this.Unregister(EventID.moves, CalculateMoves);
-        this.Unregister(EventID.sendWordUI, Recieve);
-        //this.Register(EventID.ShowBG, ShowBG);
+        this.Unregister(EventID.Moves, CalculateMoves);
+        this.Unregister(EventID.SendWordToUI, Recieve);
     }
     void Start()
     {
@@ -55,8 +49,7 @@ public class UIWordchainController : MonoBehaviour
         }
         if (number == 0)
         {
-            //uiView.ShowBG();
-            this.Broadcast(EventID.showPopupEndGame);
+            this.Broadcast(EventID.ShowEndGamePopup);
         }
     }
 
@@ -94,7 +87,6 @@ public class UIWordchainController : MonoBehaviour
         foreach (string word in listWord)
         {
             string path = CONST.PATH_IMG + category + "/" + word;
-            //Sprite sprite = ResourceManager.Instance.GetImage(path);
             Sprite sprite = ResourceManager.Instance.GetResource<Sprite>(path);
 
             if (sprite != null)
@@ -118,17 +110,15 @@ public class UIWordchainController : MonoBehaviour
     }
     public void ExitGame() {
         UIManager.Instance.ShowScreen<HomeScreen>();
+        SoundManager.Instance.StopLoopingMusic();
+        SoundManager.Instance.PlayLoopingMusic(SoundManager.Instance.backgroundGame);
     }
     public void PlayGameAgain()
     {
         uiView.SetupGame();
         uiView.ShowMoves(uiView.numberMoves);
-        this.Broadcast(EventID.playGameAgain);
+        this.Broadcast(EventID.PlayGameAgain);
     }
-    //public void ShowBG(object data)
-    //{
-    //    uiView.ShowBG() ;
-    //}
     public Sprite GetImage(string type, ListImage listImage)
     {
         if (listImage.ImageDictionary.TryGetValue(type, out Sprite sprite))
@@ -136,5 +126,9 @@ public class UIWordchainController : MonoBehaviour
             return sprite;
         }
         return null;
+    }
+    public void PressButton()
+    {
+        SoundManager.Instance.PressButton();
     }
 }

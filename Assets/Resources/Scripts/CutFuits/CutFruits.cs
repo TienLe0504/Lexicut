@@ -13,7 +13,7 @@ public class CutFruits : BaseScreen
     public override void Init()
     {
         base.Init();
-        controller.StartGame();
+        controller.InitializeGame();
     }
 
     public override void Show(object data)
@@ -22,7 +22,8 @@ public class CutFruits : BaseScreen
     }
     public void ChangeSceence()
     {
-        UIManager.Instance.ShowPopup<ShowPopupScore>(controller.uiView.textScore.text.ToString());
+        SoundManager.Instance.StopLoopingMusic();
+        UIManager.Instance.ShowPopup<ShowPopupScore>(controller.cutFruitUI.textScore.text.ToString());
         Hide();
     }
 }

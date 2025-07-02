@@ -12,6 +12,7 @@ public class OverlapUseItemController : MonoBehaviour
     }
     public void OnClickUseItem()
     {
+        SoundManager.Instance.PressButton();
         if (itemInventoryController.inventory.isUsed)
         {
             itemInventoryController.inventory.isUsed = false;
@@ -21,7 +22,7 @@ public class OverlapUseItemController : MonoBehaviour
         }
         else
         {
-            this.Broadcast(EventID.UpdateStatusItem, itemInventoryController.inventory.typeChoice);
+            this.Broadcast(EventID.UpdateItemStatus, itemInventoryController.inventory.typeChoice);
             itemInventoryController.inventory.isUsed = true;
             itemInventoryController.itemShop.SetUpShadow(true);
             SaveData(itemInventoryController.inventory.typeInventory.ToString());
@@ -31,10 +32,7 @@ public class OverlapUseItemController : MonoBehaviour
     }
     public void UseItem(string key, string value)
     {
-        //ResourceManager.Instance.SaveJson<string>(CONST.PATH_STORE_ABSOLUTE,key,value);
-        ResourceManager.Instance.SaveJson<string>(CONST.KEY_FILENAME_STORE, key, value);
-
-
+        ResourceManager.Instance.SaveToFile<string>(CONST.KEY_FILENAME_STORE, key, value);
     }
     public void SaveData(string value)
     {
@@ -56,12 +54,12 @@ public class OverlapUseItemController : MonoBehaviour
         {
             if (value == "")
             {
-                ManagerGame.Instance.CreateEffect(true);
+                ManagerGame.Instance.CreateEffectCell(true);
             }
             else
             {
                 ManagerGame.Instance.effectCellName = itemInventoryController.inventory.typeInventory.ToString();
-                ManagerGame.Instance.CreateEffect();
+                ManagerGame.Instance.CreateEffectCell();
             }
                 UseItem(CONST.KEY_EFFECT, value);
         }
@@ -78,6 +76,11 @@ public class OverlapUseItemController : MonoBehaviour
             }
                 UseItem(CONST.KEY_TRAIL, value);
         }
+    }
+
+    public void PressButton()
+    {
+        SoundManager.Instance.PressButton();
     }
 
 }

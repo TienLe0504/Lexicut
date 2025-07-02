@@ -9,29 +9,45 @@ using UnityEngine.UI;
 
 public class CutFruitsView : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
+    // === Controller ===
     public CutFruitController controller;
-    public GameObject tranformItemCut;
-    public ItemCutView prefabItemcut;
-    public TextMeshProUGUI textContent;
-    public TextMeshProUGUI timeText;
-    public TextMeshProUGUI timeCount;
-    public TextMeshProUGUI textScore;
-    public TextMeshProUGUI textCombo;
-    public TextMeshProUGUI textPerfect;
-    public TrailRenderer trail;
+
+    // === Main Camera ===
     private Camera mainCamera;
-    public GameObject trailTranForm;
-    public TrailRenderer newTrail;
-    public GameObject popupShowWord;
-    public GameObject prefabImgWord;
-    public GameObject tranformImgWord;
-    public Button btnPlayGame;
-    public GameObject TranformExplode;
-    private Tween tweenCombo;
-    private Tween tweenPerfect;
-    private Tween tweenScore;
-    private Tween tweenWord;
-    public GameObject effectParrent;
+
+    // === Trail Handling ===
+    public TrailRenderer trail;                 // Trail prefab từ ManagerGame
+    public TrailRenderer newTrail;             // Trail instance đang vẽ
+    public GameObject trailTranForm;           // Vị trí parent chứa trail
+
+    // === Item Cut Setup ===
+    public GameObject tranformItemCut;         // Transform chứa các ItemCut
+    public ItemCutView prefabItemcut;          // Prefab để spawn ItemCut
+    public GameObject TranformExplode;         // Transform chứa hiệu ứng nổ
+
+    // === Word Display UI ===
+    public GameObject popupShowWord;           // Popup hiển thị từ vựng
+    public GameObject prefabImgWord;           // Prefab chứa ảnh + chữ từ vựng
+    public GameObject tranformImgWord;         // Transform chứa các prefabImgWord
+
+    // === UI - Text Components ===
+    public TextMeshProUGUI textContent;        // Hiển thị từ cần chém
+    public TextMeshProUGUI timeText;           // Hiển thị thời gian đếm ngược chính
+    public TextMeshProUGUI timeCount;          // Hiển thị thời gian đếm lùi (3,2,1)
+    public TextMeshProUGUI textScore;          // Hiển thị điểm số
+    public TextMeshProUGUI textCombo;          // Hiển thị combo
+    public TextMeshProUGUI textPerfect;        // Hiển thị "Perfect" hoặc "Miss"
+
+    // === Buttons ===
+    public Button btnPlayGame;                 // Nút bắt đầu chơi
+
+    // === Effects & Animation ===
+    public GameObject effectParrent;           // Vị trí spawn hiệu ứng
+    private Tween tweenCombo;                  // Tween combo
+    private Tween tweenPerfect;                // Tween perfect/miss
+    private Tween tweenScore;                  // Tween điểm số
+    private Tween tweenWord;                   // Tween từ vựng
+
 
 
     private void Awake()
@@ -82,6 +98,7 @@ public class CutFruitsView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     {
         for (int i = start; i > 0; i--)
         {
+            controller.PlayCountdownSound();
             timeCount.text = i.ToString();
             timeCount.transform.localScale = Vector3.zero;
             timeCount.gameObject.SetActive(true);
@@ -95,8 +112,6 @@ public class CutFruitsView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     public void OnPointerDown(PointerEventData eventData)
     {
         controller.SetOnIsPress();
-        //newTrail = Instantiate(trail, trailTranForm.transform);
-        //newTrail = controller.CreateTrail(trail, trailTranForm, GetWorldPosition(eventData));
         newTrail = controller.CreateTrail(ManagerGame.Instance.trailCurrent, trailTranForm, GetWorldPosition(eventData));
         newTrail.GetComponent<RectTransform>().position = GetWorldPosition(eventData);
     }
@@ -109,7 +124,6 @@ public class CutFruitsView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     public void OnPointerUp(PointerEventData eventData)
     {
         controller.SetOffIsPress();
-        //Destroy(newTrail);
         controller.ReturnTrailPool(TrailType.Trail, newTrail);
     }
 
@@ -169,10 +183,11 @@ public class CutFruitsView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     {
         foreach (string word in words)
         {
+            controller.PlayWordAppearSound();
             GameObject imgWord = Instantiate(prefabImgWord, tranformImgWord.transform);
             imgWord.GetComponentInChildren<TextMeshProUGUI>().text = " - " + word;
 
-            Sprite sprite = controller.GetImage(word);
+            Sprite sprite = controller.LoadItemSprite(word);
             imgWord.GetComponent<Image>().sprite = sprite;
 
             imgWord.transform.localScale = Vector3.zero;
@@ -193,8 +208,9 @@ public class CutFruitsView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
     public void PlayGame()
     {
+        controller.PressButton();
         popupShowWord.SetActive(false);
-        controller.PlayGame();
+        controller.StartGameplay();
     }
 
     public void ShowTextCombo(int combo)
@@ -222,14 +238,13 @@ public class CutFruitsView : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         }
         if (isEffect)
         {
-            ManagerParticelSystem.Instance.CreateParticelSystem(effectParrent.GetComponent<RectTransform>().position.x, effectParrent.GetComponent<RectTransform>().position.y, ManagerParticelSystem.Instance.effectPerfect, effectParrent, 1f, color, color);
+            ManagerParticelSystem.Instance.CreateParticleEffect(effectParrent.GetComponent<RectTransform>().position.x, effectParrent.GetComponent<RectTransform>().position.y, ManagerParticelSystem.Instance.perfectEffectPrefab, effectParrent, 1f, color, color);
         }
         textPerfect.color = color;
         textPerfect.text = perfect;
         textPerfect.transform.localScale = Vector3.zero;
         textPerfect.gameObject.SetActive(true);
 
-        // Hiện lên nhanh, rồi thu nhỏ nhanh
         tweenPerfect = textPerfect.transform.DOScale(1.2f, 0.25f)
             .SetEase(Ease.OutQuad)
             .OnComplete(() =>

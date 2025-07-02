@@ -878,23 +878,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 213a522f715905c49b600013fa861cfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cutFruits: {fileID: 108167941467664017}
-  uiView: {fileID: 5820522900815417731}
-  listCutFruitsController: []
-  numberWord: 01000000020000000400000005000000
+  cutFruitManager: {fileID: 108167941467664017}
+  cutFruitUI: {fileID: 5820522900815417731}
+  activeItemView: []
+  wordCountsPerRound: 01000000020000000400000005000000
+  roundDuration: 15
+  totalGameTime: 75
+  screenWidth: 0
+  startYPosition: 0
+  itemHeight: 150
+  itemScale: 0.13
+  itemSpacingX: 0
+  randomYMin: 0
+  randomYMax: 0
+  horizontalRandomFactor: 0.06
+  lightenFactor: 0.5
+  inputPressed: 0
   temp: 0
-  timeEachGround: 15
-  timeToPlay: 75
-  Width: 0
-  YStart: 0
-  heightItem: 150
-  posRandomYFrom: 0
-  posRandomYTo: 0
-  size: 0.13
-  rateRandomWidth: 0.06
-  ligthFactor: 0.5
-  sizeBlockWidthX: 0
-  isPressed: 0
 --- !u!114 &108167941467664017
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,35 +8,36 @@ using UnityEngine.UI;
 public class HomeScreen : BaseScreen
 {
     public HomeScreenController controller;
+    public TextMeshProUGUI gold;
     public Image bgImage;
     public Button btnPlay;
-    public TextMeshProUGUI gold;
     public Button btnShop;
     public Button btnInventory;
+    public Button btnRank;
     private Tween goldTween;
     public override void Init()
     {
         base.Init();
-        //controller.SetupGold();
         bgImage.rectTransform.sizeDelta = new Vector2(ManagerGame.Instance.WidthScreen, ManagerGame.Instance.HeightScreen);
-        
         btnPlay.onClick.AddListener(() => OpenChooseCategory());
         btnShop.onClick.AddListener(() => OpenShop());
         btnInventory.onClick.AddListener(() => OpenInventory());
+        btnRank.onClick.AddListener(() => ShowRank());
         ShowGold(false);
     }
     private void OnEnable()
     {
-        this.Register(EventID.SetActiveStore, ShowShop);
+        this.Register(EventID.SetStoreActive, ShowShop);
         this.Register(EventID.Back, ShowBtn);
-        this.Register(EventID.ShowBtnInventory, ShowBtnInventory);
-
+        this.Register(EventID.ShowInventoryButton, ShowBtnInventory);
+        this.Register(EventID.ShowRankButton, ShowBtnRank);
     }
     private void OnDisable()
     {
-        this.Unregister(EventID.SetActiveStore, ShowShop);
+        this.Unregister(EventID.SetStoreActive, ShowShop);
         this.Unregister(EventID.Back, ShowBtn);
-        this.Unregister(EventID.ShowBtnInventory, ShowBtnInventory);
+        this.Unregister(EventID.ShowInventoryButton, ShowBtnInventory);
+        this.Unregister(EventID.ShowRankButton, ShowBtnRank);
 
     }
     public override void Show(object data)
@@ -49,26 +50,22 @@ public class HomeScreen : BaseScreen
                 controller.SaveGold(value);
 
             }
-            Debug.Log("-------------- gold ----------"+value);
         }
-        // Add any HomeScreen-specific show logic here
     }
     public override void Hide()
     {
         base.Hide();
         ShowBtn();
-        // Add any HomeScreen-specific hide logic here
     }
     public void OpenChooseCategory()
     {
-        //UIManager.Instance.ShowPopup<PopupChooseType>();
-        UIManager.Instance.ShowPopup<GamePicker>();
+        controller.PlayGame();
         btnPlay.gameObject.SetActive(false);
     }
     public void OpenShop()
     {
         btnShop.gameObject.SetActive(false);
-        UIManager.Instance.ShowPopup<PopupShop>();
+        controller.OpenShop();
     }
     public void ShowShop(object data = null)
     {
@@ -78,7 +75,16 @@ public class HomeScreen : BaseScreen
     public void OpenInventory()
     {
         btnInventory.gameObject.SetActive(false);
-        UIManager.Instance.ShowPopup<PopupInventory>();
+        controller.OpenInventory();
+    }
+    public void ShowRank()
+    {
+        btnRank.gameObject.SetActive(false);
+        controller.ShowRank();
+    }
+    public void ShowBtnRank(object data = null)
+    {
+        btnRank.gameObject.SetActive(true);
     }
     public void ShowBtnInventory(object data = null)
     {

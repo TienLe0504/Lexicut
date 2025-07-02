@@ -16,16 +16,9 @@ public class ItemCutView : MonoBehaviour, IPointerDownHandler, IDragHandler, IPo
         this.cutFruitController = cutFruitController;
     }
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        Debug.Log("Đã nhấn vào: " + itemCutModel.name);
-        //cutFruitController.CreateExplode(itemCutModel, this);
-    }
+    public void OnPointerDown(PointerEventData eventData){}
 
-    public void OnDrag(PointerEventData eventData)
-    {
-        Debug.Log("Kéo qua: " + name);
-    }
+    public void OnDrag(PointerEventData eventData){}
 
     public void OnPointerEnter(PointerEventData eventData)
     {
